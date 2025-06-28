@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Watch Full 18+ Video</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- INSERT YOUR POPUP AD SCRIPT HERE -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 400px;
+            margin: auto;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .banner-ad {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #222;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- QUIZ CONTAINER -->
+<div class="quiz-container" id="quizBox">
+    <h2>Are you 18+?</h2>
+    <button class="btn" onclick="nextQuestion(1)">Yes</button>
+    <button class="btn" onclick="nextQuestion(1)">No</button>
+</div>
+
+<!-- BOTTOM BANNER AD -->
+<div class="banner-ad">
+    <!-- INSERT YOUR BANNER AD CODE HERE -->
+    <p>Sticky Bottom Ad Banner</p>
+</div>
+
+<!-- QUIZ SCRIPT -->
+<script>
+    const quizBox = document.getElementById("quizBox");
+
+    function nextQuestion(step) {
+        if (step === 1) {
+            quizBox.innerHTML = `
+                <h2>Do you want to watch full video?</h2>
+                <button class="btn" onclick="nextQuestion(2)">Yes</button>
+                <button class="btn" onclick="nextQuestion(2)">No</button>
+            `;
+        } else if (step === 2) {
+            quizBox.innerHTML = `
+                <h2>Where are you from?</h2>
+                <button class="btn" onclick="showInterstitial()">India</button>
+                <button class="btn" onclick="showInterstitial()">USA</button>
+                <button class="btn" onclick="showInterstitial()">Other</button>
+            `;
+        }
+    }
+
+    function showInterstitial() {
+        // INSERT YOUR SECOND POPUP SCRIPT HERE (on quiz finish)
+        quizBox.innerHTML = `
+            <h2>Loading your content...</h2>
+            <p>Please wait 5 seconds</p>
+        `;
+
+        setTimeout(() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectTo = urlParams.get("to") || "https://example.com";
+            window.location.href = redirectTo;
+        }, 5000);
+    }
+</script>
+
+</body>
+</html>
