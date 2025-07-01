@@ -1,95 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="a93c1eff5fef91d627ae6df98b053b31eb4dc438" content="a93c1eff5fef91d627ae6df98b053b31eb4dc438" />
-    <title>Watch Full 18+ Video</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- INSERT YOUR POPUP AD SCRIPT HERE -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #000;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-        }
-        .quiz-container {
-            max-width: 400px;
-            margin: auto;
-            background: #111;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            background: #e91e63;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            margin: 5px;
-            cursor: pointer;
-        }
-        .banner-ad {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #222;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reward Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .wallet {
+      background-color: #007bff;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .section {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .btn {
+      padding: 5px 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn[disabled] {
+      background-color: #888;
+      cursor: not-allowed;
+    }
+
+    .login-form {
+      max-width: 400px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .instructions {
+      font-size: 14px;
+      color: #555;
+      margin-top: 5px;
+    }
+
+    .popup {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .popup-content p {
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .bank-input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
 
-<!-- QUIZ CONTAINER -->
-<div class="quiz-container" id="quizBox">
-    <h2>Are you 18+?</h2>
-    <button class="btn" onclick="nextQuestion(1)">Yes</button>
-    <button class="btn" onclick="nextQuestion(1)">No</button>
-</div>
+<div id="app"></div>
+<div id="popupContainer"></div>
 
-<!-- BOTTOM BANNER AD -->
-<div class="banner-ad">
-    <!-- INSERT YOUR BANNER AD CODE HERE -->
-    <p>Sticky Bottom Ad Banner</p>
-</div>
-
-<!-- QUIZ SCRIPT -->
 <script>
-    const quizBox = document.getElementById("quizBox");
+  const app = document.getElementById("app");
+  const popupContainer = document.getElementById("popupContainer");
+  const TASK_AMOUNT = 15;
 
-    function nextQuestion(step) {
-        if (step === 1) {
-            quizBox.innerHTML = `
-                <h2>Do you want to watch full video?</h2>
-                <button class="btn" onclick="nextQuestion(2)">Yes</button>
-                <button class="btn" onclick="nextQuestion(2)">No</button>
-            `;
-        } else if (step === 2) {
-            quizBox.innerHTML = `
-                <h2>Where are you from?</h2>
-                <button class="btn" onclick="showInterstitial()">India</button>
-                <button class="btn" onclick="showInterstitial()">USA</button>
-                <button class="btn" onclick="showInterstitial()">Other</button>
-            `;
-        }
+  function renderLogin() {
+    app.innerHTML = `
+      <div class="login-form">
+        <h2>Login or Register</h2>
+        <input type="text" id="username" placeholder="Username" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+        <input type="password" id="password" placeholder="Password" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+        <button class="btn" style="width: 100%;" onclick="login()">Enter</button>
+      </div>
+    `;
+  }
+
+  function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!username || !password) return alert("Please enter both fields");
+
+    const savedPass = localStorage.getItem(`pass_${username}`);
+    if (savedPass && savedPass !== password) return alert("Wrong password");
+
+    localStorage.setItem(`pass_${username}`, password);
+    localStorage.setItem("current_user", username);
+    if (!localStorage.getItem(`wallet_${username}`)) {
+      localStorage.setItem(`wallet_${username}`, 0);
+    }
+    if (!localStorage.getItem(`taskLog_${username}`)) {
+      localStorage.setItem(`taskLog_${username}`, JSON.stringify([]));
+    }
+    renderDashboard(username);
+  }
+
+  function addBalance(taskId) {
+    const user = localStorage.getItem("current_user");
+    const logKey = `taskLog_${user}`;
+    const completedTasks = JSON.parse(localStorage.getItem(logKey) || "[]");
+
+    if (completedTasks.includes(taskId)) {
+      alert("You have already completed this task today.");
+      return;
     }
 
-    function showInterstitial() {
-        // INSERT YOUR SECOND POPUP SCRIPT HERE (on quiz finish)
-        quizBox.innerHTML = `
-            <h2>Loading your content...</h2>
-            <p>Please wait 5 seconds</p>
-        `;
+    completedTasks.push(taskId);
+    localStorage.setItem(logKey, JSON.stringify(completedTasks));
 
-        setTimeout(() => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const redirectTo = urlParams.get("to") || "https://example.com";
-            window.location.href = redirectTo;
-        }, 5000);
+    const walletKey = `wallet_${user}`;
+    const current = parseInt(localStorage.getItem(walletKey) || 0);
+    localStorage.setItem(walletKey, current + TASK_AMOUNT);
+    renderDashboard(user);
+  }
+
+  function showWithdrawPopup() {
+    const user = localStorage.getItem("current_user");
+    const name = localStorage.getItem(`bank_name_${user}`) || "";
+    const acc = localStorage.getItem(`bank_acc_${user}`) || "";
+    const ifsc = localStorage.getItem(`bank_ifsc_${user}`) || "";
+
+    popupContainer.innerHTML = `
+      <div class="popup">
+        <div class="popup-content">
+          <h3>Withdrawal Instructions</h3>
+          <p>To unlock your withdrawal, please deposit ₹399.</p>
+          <p>Use the following UPI ID to pay:</p>
+          <strong style="font-size: 16px;">sahilzeerak123@okhdfcbank</strong>
+          <p>Once payment is done, contact support to confirm and release ₹1000.</p>
+          <h4 style="margin-top: 15px;">Your Bank Details:</h4>
+          <input class="bank-input" placeholder="Your Name" value="${name}" onchange="saveBank('name', this.value)" />
+          <input class="bank-input" placeholder="Account Number" value="${acc}" onchange="saveBank('acc', this.value)" />
+          <input class="bank-input" placeholder="IFSC Code" value="${ifsc}" onchange="saveBank('ifsc', this.value)" />
+          <button class="btn" onclick="closePopup()">OK</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveBank(field, value) {
+    const user = localStorage.getItem("current_user");
+    localStorage.setItem(`bank_${field}_${user}`, value);
+  }
+
+  function closePopup() {
+    popupContainer.innerHTML = "";
+  }
+
+  function withdrawRequest() {
+    const user = localStorage.getItem("current_user");
+    const amount = parseInt(localStorage.getItem(`wallet_${user}`) || 0);
+
+    if (amount < 1000) {
+      alert("You need ₹1000 in wallet to unlock withdrawal. Keep completing tasks daily.");
+      return;
     }
+
+    showWithdrawPopup();
+  }
+
+  function renderDashboard(username) {
+    const wallet = parseInt(localStorage.getItem(`wallet_${username}`) || 0);
+    const withdrawEnabled = wallet >= 1000;
+    app.innerHTML = `
+      <div class="container">
+        <div class="wallet">
+          👋 Welcome, <strong>${username}</strong><br>
+          💰 Wallet: ₹${wallet}<br>
+          <p style="font-size:13px; margin-top:5px;">Withdrawals processed weekly. New users need ₹1000 to unlock.</p>
+          <button class="btn" onclick="withdrawRequest()" ${!withdrawEnabled ? 'disabled' : ''}>Withdraw</button>
+        </div>
+
+        <div class="section">
+          <h3>📅 Daily Missions (₹15 each)</h3>
+          ${[1, 2, 3, 4].map(i => `
+            <div class="task">
+              <div>
+                ✅ Task ${i}<br>
+                <div class="instructions">Complete offer ${i} via smart link.</div>
+              </div>
+              <button class="btn" onclick="addBalance('task${i}')">Mark ₹15</button>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="section">
+          <h3>📆 Weekly Missions (₹15 each)</h3>
+          ${[5, 6].map(i => `
+            <div class="task">
+              <div>
+                📝 Task ${i}<br>
+                <div class="instructions">Bigger offer or full app registration.</div>
+              </div>
+              <button class="btn" onclick="addBalance('task${i}')">Mark ₹15</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  const user = localStorage.getItem("current_user");
+  if (user) {
+    renderDashboard(user);
+  } else {
+    renderLogin();
+  }
 </script>
 
 </body>
