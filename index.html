@@ -44,7 +44,13 @@
     .task-meta { margin-top: 4px; font-size: 0.85rem; color: var(--text-secondary); }
     .btn-claim { padding: 10px 20px; background: var(--accent-gold); color: var(--bg); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
     .btn-claim:disabled { background: #666; color: #ccc; cursor: not-allowed; }
-    /* Modal styles omitted for brevity; keep them as in your original code */
+    .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
+    .modal-content { background: var(--card-bg); padding: 20px; margin: 10% auto; border-radius: 8px; width: 90%; max-width: 360px; color: var(--text-primary); position: relative; }
+    .close { position: absolute; top: 12px; right: 16px; font-size: 1.2rem; cursor: pointer; }
+    .modal-body input { width: 100%; margin: 8px 0; padding: 10px; border: none; border-radius: 6px; background: #121526; color: var(--text-primary); }
+    #withdrawSubmit { width: 100%; padding: 12px; margin-top: 8px; background: var(--accent-gold); border: none; border-radius: 6px; font-weight: 600; color: var(--bg); cursor: pointer; }
+    .withdraw-error { color: #FF4D4F; font-size: 0.85rem; margin: 6px 0 0; text-align: center; opacity: 0; transition: opacity 0.3s ease; }
+    .withdraw-error.visible { opacity: 1; }
   </style>
 </head>
 <body>
@@ -89,46 +95,29 @@
     <ul id="task-list" class="task-list"></ul>
   </div>
 
-  <!-- Your withdraw-modal code here... -->
+  <div id="withdrawModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Withdraw Funds</h2>
+      <div class="modal-body">
+        <input type="number" id="withdrawAmount" placeholder="Amount" min="2000" />
+        <input type="text" id="accName" placeholder="Account Holder Name" />
+        <input type="text" id="accNumber" placeholder="Account Number" />
+        <input type="text" id="ifsc" placeholder="IFSC Code" />
+        <div id="withdrawError" class="withdraw-error">Minimum withdrawal is ₹2,000</div>
+        <button id="withdrawSubmit">Withdraw</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Existing dashboard logic scripts here... -->
-
-  <!-- ─── Rotating Live‑Feed Script ─── -->
   <script>
-    // 1. Fifty Indian names
-    const names = [
-      'Arjun','Vihaan','Rohan','Aarav','Kabir',
-      'Advait','Ishaan','Krishna','Ritik','Neel',
-      'Shaurya','Vivaan','Atharv','Ayaan','Reyansh',
-      'Kunal','Darsh','Sahil','Yash','Ansh',
-      'Diya','Aanya','Ira','Anika','Meera',
-      'Kiara','Saanvi','Riya','Tara','Mira',
-      'Sara','Anaya','Aadhya','Kavya','Nisha',
-      'Jiya','Shreya','Pallavi','Aditi','Lavya',
-      'Tanvi','Radhika','Naina','Pooja','Priya',
-      'Neha','Sneha','Sanya','Bhavya','Tanya'
-    ];
+    const tasks = {
+      daily: Array.from({length: 6}, (_, i) => ({ title: `🎲 Task ${i+1}`, meta: `Earn ₹${12+i}`, reward: 12+i, color: 'var(--accent-gold)', key: `daily_task_${i}` })),
+      weekly: Array.from({length: 4}, (_, i) => ({ title: `🏆 Mission ${i+1}`, meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', key: `weekly_task_${i}` })),
+      monthly: []
+    };
+    let lastClaimTime = 0;
 
-    // 2. Random integer helper
-    function randInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    // 3. Build present‑tense “withdraws” messages
-    const messages = names.map(name => {
-      const amount = Math.random() < 0.7
-        ? randInt(2000, 3000)
-        : randInt(3001, 4000);
-      return `🎉 ${name} withdraws ₹${amount}!`;
-    });
-
-    // 4. Rotate every 4 seconds
-    let msgIndex = 0;
-    const liveFeedEl = document.querySelector('.live-feed');
-    setInterval(() => {
-      liveFeedEl.textContent = messages[msgIndex];
-      msgIndex = (msgIndex + 1) % messages.length;
-    }, 4000);
-  </script>
-</body>
-</html>
+    function loginUser() {
+      const name = document
+      
