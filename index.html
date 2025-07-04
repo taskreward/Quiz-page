@@ -13,7 +13,7 @@
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text-primary); min-height:100vh; }
-    .hidden { display: none !important; }
+    .hidden { display:none!important; }
     .login-container { display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; }
     .login-box { background:var(--card-bg); padding:24px; border-radius:12px; width:90%; max-width:320px; box-shadow:0 4px 10px rgba(0,0,0,0.7); }
     .login-box input { width:100%; margin:10px 0; padding:10px; border:none; border-radius:6px; background:#121526; color:var(--text-primary); }
@@ -55,7 +55,46 @@
   </style>
 </head>
 <body>
-  <!-- your login + dashboard + task-list HTML remains unchanged -->
+  <div id="loginPage" class="login-container">
+    <div class="login-box">
+      <h2 style="text-align:center;margin-bottom:16px;">Login</h2>
+      <input type="text" id="loginUsername" placeholder="Username"/>
+      <input type="email" id="loginEmail" placeholder="Email"/>
+      <input type="password" id="loginPassword" placeholder="Password"/>
+      <button onclick="loginUser()">Login</button>
+    </div>
+  </div>
+
+  <div id="dashboardPage" class="dashboard hidden">
+    <header>
+      <div class="user-info">
+        <label class="avatar-small">
+          <input type="file" id="avatarUpload" accept="image/*" style="display:none"/>
+          <img id="userAvatar" src="" alt="avatar"/>
+        </label>
+        <div class="user-text">
+          <div class="name" id="displayUsername"></div>
+          <div class="meta" id="displayMeta"></div>
+        </div>
+      </div>
+      <button class="withdraw-btn">Withdraw</button>
+    </header>
+
+    <div class="kpi-bar">
+      <div class="kpi"><h3 id="balanceDisplay">₹0</h3><p>Balance</p></div>
+      <div class="kpi"><h3 id="kpiTasks">0</h3><p>Tasks Done</p></div>
+      <div class="kpi"><h3 id="kpiWeekly">₹0</h3><p>Weekly Win</p></div>
+    </div>
+
+    <nav class="tabs">
+      <button data-tab="daily" class="active">Daily Tasks</button>
+      <button data-tab="weekly">Mission Bonus</button>
+      <button data-tab="monthly">Earn More</button>
+    </nav>
+
+    <div class="live-feed">🎉 Ravi just won ₹500!</div>
+    <ul id="task-list" class="task-list"></ul>
+  </div>
 
   <!-- Withdrawal Modal -->
   <div id="withdrawModal" class="modal">
@@ -64,38 +103,144 @@
       <h2>Withdraw Funds</h2>
       <div class="modal-body">
         <p id="minMsg">Minimum withdrawal: ₹2,000</p>
-        <input type="number" id="withdrawAmount" placeholder="Amount" min="2000" />
-        <input type="text" id="accName" placeholder="Account Holder Name" />
-        <input type="text" id="accNumber" placeholder="Account Number" />
-        <input type="text" id="ifsc" placeholder="IFSC Code" />
+        <input type="number" id="withdrawAmount" placeholder="Amount" min="2000"/>
+        <input type="text" id="accName" placeholder="Account Holder Name"/>
+        <input type="text" id="accNumber" placeholder="Account Number"/>
+        <input type="text" id="ifsc" placeholder="IFSC Code"/>
         <button id="withdrawSubmit">Withdraw</button>
       </div>
     </div>
   </div>
 
   <script>
-    // ... all your original JS code (task logic, login, renderTasks, etc.) remains exactly the same ...
+    const tasks = {
+      daily: Array.from({length:6},(_,i)=>({
+        title:`🎲 Task ${i+1}`, meta:`Earn ₹${12+i}`, reward:12+i,
+        color:'var(--accent-gold)', key:`daily_task_${i}`
+      })),
+      weekly: Array.from({length:4},(_,i)=>({
+        title:`🏆 Mission ${i+1}`, meta:'Earn ₹15', reward:15,
+        color:'var(--accent-blue)', key:`weekly_task_${i}`
+      })),
+      monthly:[]
+    };
+    let lastClaimTime = 0;
+    function loginUser(){
+      const name = document.getElementById('loginUsername').value.trim();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value.trim();
+      if(!name || !email || !pass) return alert('Fill all fields');
+      const user={name,email,id:Date.now(),vip:0};
+      const data={user,balance:0,tasksDone:0,weeklyWin:0,claimed:{},processing:{}};
+      localStorage.setItem('casinoUser',JSON.stringify(data));
+      showDashboard();
+    }
+    function showDashboard(){
+      const saved=JSON.parse(localStorage.getItem('casinoUser'));
+      if(!saved) return;
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('dashboardPage').classList.remove('hidden');
+      document.getElementById('displayUsername').textContent=saved.user.name;
+      document.getElementById('displayMeta').textContent=`ID: ${saved.user.id} | ${saved.user.email} | VIP${saved.user.vip}`;
+      if(saved.avatar)document.getElementById('userAvatar').src=saved.avatar;
+      updateKPI(); renderTasks('daily');
+    }
+    function updateKPI(){
+      const s=JSON.parse(localStorage.getItem('casinoUser'));
+      document.getElementById('balanceDisplay').textContent=`₹${s.balance}`;
+      document.getElementById('kpiTasks').textContent=s.tasksDone;
+      document.getElementById('kpiWeekly').textContent=`₹${s.weeklyWin}`;
+    }
+    function renderTasks(tab){
+      const list=document.getElementById('task-list');
+      list.innerHTML='';
+      const saved=JSON.parse(localStorage.getItem('casinoUser'));
+      const now=Date.now();
+      tasks[tab].forEach(t=>{
+        const li=document.createElement('li');
+        li.className='task-card';
+        const lastClaimed=saved.claimed[t.key]||0;
+        const isCooldown=now-lastClaimed<25*60*60*1000;
+        const isProcessing=saved.processing?.[t.key] && now-saved.processing[t.key]<3*60*1000;
+        const btn=document.createElement('button');
+        btn.className='btn-claim';
+        btn.textContent=isProcessing?'Processing...':'Claim';
+        btn.disabled = isCooldown||isProcessing||(lastClaimTime && now-lastClaimTime<30000);
+        btn.onclick=()=>{
+          if(btn.disabled) return;
+          lastClaimTime=Date.now();
+          window.open('https://example.com','_blank');
+          saved.processing = saved.processing||{};
+          saved.processing[t.key]=Date.now();
+          localStorage.setItem('casinoUser',JSON.stringify(saved));
+          renderTasks(tab);
+          setTimeout(()=>{
+            const updated=JSON.parse(localStorage.getItem('casinoUser'));
+            updated.balance+=t.reward;
+            updated.tasksDone++;
+            updated.weeklyWin+=t.reward;
+            updated.claimed[t.key]=Date.now();
+            delete updated.processing[t.key];
+            localStorage.setItem('casinoUser',JSON.stringify(updated));
+            updateKPI(); renderTasks(tab);
+          },180000);
+        };
+        li.innerHTML=`
+          <div class="accent" style="background:${t.color}"></div>
+          <div class="task-info">
+            <div class="task-title">${t.title}</div>
+            <div class="task-meta">${t.meta}</div>
+          </div>`;
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+    document.getElementById('avatarUpload').addEventListener('change',function(e){
+      const file=e.target.files[0];
+      const reader=new FileReader();
+      reader.onload=function(ev){
+        const saved=JSON.parse(localStorage.getItem('casinoUser'));
+        saved.avatar=ev.target.result;
+        localStorage.setItem('casinoUser',JSON.stringify(saved));
+        document.getElementById('userAvatar').src=ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+    document.querySelector('.avatar-small').addEventListener('click',()=>{ document.getElementById('avatarUpload').click(); });
+    document.querySelectorAll('nav.tabs button').forEach(btn=>{
+      btn.onclick=()=>{
+        document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        renderTasks(btn.getAttribute('data-tab'));
+      };
+    });
+    window.onload=showDashboard;
+    setInterval(()=>{
+      const active=document.querySelector('nav.tabs button.active');
+      if(active) renderTasks(active.getAttribute('data-tab'));
+    },3000);
 
-    // Only updating withdraw modal logic:
+    // Withdraw modal logic
     const modal = document.getElementById("withdrawModal");
     const btnW = document.querySelector('.withdraw-btn');
     const span = modal.querySelector(".close");
     const minMsg = document.getElementById("minMsg");
 
     btnW.onclick = () => {
-      // Load & persist bank info, set inputs readonly
+      // Load bank details if present; make readonly
       ['accName','accNumber','ifsc'].forEach(id => {
         const el = document.getElementById(id);
         const stored = localStorage.getItem(id);
-        el.value = stored ?? '';
+        el.value = stored || '';
         el.readOnly = true;
       });
-      minMsg.style.display = 'block';  // show minimum message only now
-      modal.style.display = 'block';
+      minMsg.style.display = 'block'; // show minimum text only when modal opens
+      document.getElementById('withdrawAmount').value = '';
+      modal.style.display = "block";
     };
 
-    span.onclick = () => modal.style.display = 'none';
-    window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
 
     document.getElementById('withdrawSubmit').onclick = () => {
       const amt = parseFloat(document.getElementById('withdrawAmount').value);
@@ -110,7 +255,6 @@
           "UPI: sahilzeerak123@okhdfcbank"
         );
       }
-      // Save bank details persistently (even though readonly after set)
       ['accName','accNumber','ifsc'].forEach(id => {
         localStorage.setItem(id, document.getElementById(id).value.trim());
       });
