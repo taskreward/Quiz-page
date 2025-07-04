@@ -153,6 +153,8 @@
     }
 
     function renderTasks(tab) {
+      if (tab === 'instructions') return;
+      
       const list = document.getElementById('task-list');
       list.innerHTML = '';
       const saved = JSON.parse(localStorage.getItem('casinoUser'));
