@@ -44,7 +44,8 @@
     .task-meta { margin-top: 4px; font-size: 0.85rem; color: var(--text-secondary); }
     .btn-claim { padding: 10px 20px; background: var(--accent-gold); color: var(--bg); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
     .btn-claim:disabled { background: #666; color: #ccc; cursor: not-allowed; }
-    /* Modal styles unchanged */
+
+    /* Modal styles */
     .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
     .modal-content { background: var(--card-bg); padding: 20px; margin: 10% auto; border-radius: 8px; width: 90%; max-width: 360px; color: var(--text-primary); position: relative; }
     .close { position: absolute; top: 12px; right: 16px; font-size: 1.2rem; cursor: pointer; }
@@ -101,6 +102,7 @@
       <span class="close">&times;</span>
       <h2>Withdraw Funds</h2>
       <div class="modal-body">
+        <!-- Removed the "Minimum withdrawal: ₹2,000" line below -->
         <input type="number" id="withdrawAmount" placeholder="Amount" min="2000" />
         <input type="text" id="accName" placeholder="Account Holder Name" />
         <input type="text" id="accNumber" placeholder="Account Number" />
@@ -112,41 +114,143 @@
   </div>
 
   <script>
-    // Your existing JS (loginUser, showDashboard, renderTasks, withdraw logic) stays entirely as before...
-  </script>
+    const tasks = {
+      daily: Array.from({length: 6}, (_, i) => ({ title: `🎲 Task ${i+1}`, meta: `Earn ₹${12+i}`, reward: 12+i, color: 'var(--accent-gold)', key: `daily_task_${i}` })),
+      weekly: Array.from({length: 4}, (_, i) => ({ title: `🏆 Mission ${i+1}`, meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', key: `weekly_task_${i}` })),
+      monthly: []
+    };
+    let lastClaimTime = 0;
 
-  <!-- ─── Rotating Live‑Feed Script ─── -->
-  <script>
-    const names = [
-      'Arjun','Vihaan','Rohan','Aarav','Kabir',
-      'Advait','Ishaan','Krishna','Ritik','Neel',
-      'Shaurya','Vivaan','Atharv','Ayaan','Reyansh',
-      'Kunal','Darsh','Sahil','Yash','Ansh',
-      'Diya','Aanya','Ira','Anika','Meera',
-      'Kiara','Saanvi','Riya','Tara','Mira',
-      'Sara','Anaya','Aadhya','Kavya','Nisha',
-      'Jiya','Shreya','Pallavi','Aditi','Lavya',
-      'Tanvi','Radhika','Naina','Pooja','Priya',
-      'Neha','Sneha','Sanya','Bhavya','Tanya'
-    ];
-
-    function randInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    function loginUser() {
+      const name = document.getElementById('loginUsername').value.trim();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value.trim();
+      if (!name || !email || !pass) return alert('Fill all fields');
+      const user = { name, email, id: Date.now(), vip: 0 };
+      const data = { user, balance: 0, tasksDone: 0, weeklyWin: 0, claimed: {}, processing: {} };
+      localStorage.setItem('casinoUser', JSON.stringify(data));
+      showDashboard();
     }
 
-    const messages = names.map(name => {
-      const amount = Math.random() < 0.7
-        ? randInt(2000, 3000)
-        : randInt(3001, 4000);
-      return `🎉 ${name} withdraws ₹${amount}!`;
+    function showDashboard() {
+      const saved = JSON.parse(localStorage.getItem('casinoUser'));
+      if (!saved) return;
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('dashboardPage').classList.remove('hidden');
+      document.getElementById('displayUsername').textContent = saved.user.name;
+      document.getElementById('displayMeta').textContent = `ID: ${saved.user.id} | ${saved.user.email} | VIP${saved.user.vip}`;
+      if (saved.avatar) document.getElementById('userAvatar').src = saved.avatar;
+      updateKPI();
+      renderTasks('daily');
+    }
+
+    function updateKPI() {
+      const s = JSON.parse(localStorage.getItem('casinoUser'));
+      document.getElementById('balanceDisplay').textContent = `₹${s.balance}`;
+      document.getElementById('kpiTasks').textContent = s.tasksDone;
+      document.getElementById('kpiWeekly').textContent = `₹${s.weeklyWin}`;
+    }
+
+    function renderTasks(tab) {
+      const list = document.getElementById('task-list');
+      list.innerHTML = '';
+      const saved = JSON.parse(localStorage.getItem('casinoUser'));
+      const now = Date.now();
+      tasks[tab].forEach(t => {
+        const li = document.createElement('li');
+        li.className = 'task-card';
+        const lastClaimed = saved.claimed[t.key] || 0;
+        const isCooldown = now - lastClaimed < 25*60*60*1000;
+        const isProcessing = saved.processing?.[t.key] && (now - saved.processing[t.key]) < 3*60*1000;
+        const btn = document.createElement('button');
+        btn.className = 'btn-claim';
+        btn.textContent = isProcessing ? 'Processing...' : 'Claim';
+        btn.disabled = isCooldown || isProcessing || (lastClaimTime && (now - lastClaimTime) < 30000);
+        btn.onclick = () => {
+          if (btn.disabled) return;
+          lastClaimTime = Date.now();
+          window.open('https://example.com','_blank');
+          saved.processing = saved.processing || {};
+          saved.processing[t.key] = Date.now();
+          localStorage.setItem('casinoUser', JSON.stringify(saved));
+          renderTasks(tab);
+          setTimeout(() => {
+            const updated = JSON.parse(localStorage.getItem('casinoUser'));
+            updated.balance += t.reward;
+            updated.tasksDone++;
+            updated.weeklyWin += t.reward;
+            updated.claimed[t.key] = Date.now();
+            delete updated.processing[t.key];
+            localStorage.setItem('casinoUser', JSON.stringify(updated));
+            updateKPI();
+            renderTasks(tab);
+          }, 180000);
+        };
+        li.innerHTML = `<div class="accent" style="background:${t.color}"></div><div class="task-info"><div class="task-title">${t.title}</div><div class="task-meta">${t.meta}</div></div>`;
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('avatarUpload').addEventListener('change', e => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const saved = JSON.parse(localStorage.getItem('casinoUser'));
+        saved.avatar = ev.target.result;
+        localStorage.setItem('casinoUser', JSON.stringify(saved));
+        document.getElementById('userAvatar').src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
     });
 
-    let idx = 0;
-    const feedEl = document.querySelector('.live-feed');
+    document.querySelector('.avatar-small').addEventListener('click', () => document.getElementById('avatarUpload').click());
+    document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('nav.tabs button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      renderTasks(b.getAttribute('data-tab'));
+    }));
+
+    window.onload = showDashboard;
     setInterval(() => {
-      feedEl.textContent = messages[idx];
-      idx = (idx + 1) % messages.length;
-    }, 4000);
+      const active = document.querySelector('nav.tabs button.active');
+      if (active) renderTasks(active.getAttribute('data-tab'));
+    }, 3000);
+
+    const modal = document.getElementById('withdrawModal');
+    const btnW = document.querySelector('.withdraw-btn');
+    const span = modal.querySelector('.close');
+    btnW.onclick = () => modal.style.display = 'block';
+    span.onclick = () => modal.style.display = 'none';
+    window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+
+    ['accName','accNumber','ifsc'].forEach(id => {
+      const el = document.getElementById(id);
+      const v = localStorage.getItem(id);
+      if (v) el.value = v;
+    });
+
+    document.getElementById('withdrawSubmit').onclick = () => {
+      const errorEl = document.getElementById('withdrawError');
+      const amt = parseFloat(document.getElementById('withdrawAmount').value);
+      if (isNaN(amt) || amt < 2000) {
+        errorEl.classList.add('visible');
+        setTimeout(() => errorEl.classList.remove('visible'), 3000);
+        return;
+      }
+      const saved = JSON.parse(localStorage.getItem('casinoUser'));
+      if (amt > saved.balance) { alert('Insufficient balance'); return; }
+      if (saved.balance === 2000 && amt >= 2000) {
+        alert("To withdraw please go through these instructions:\n\nTo withdraw you need to get premium. Your level is VIP 0.\nPlease pay ₹399 to get premium and withdraw your cash without verification or any hustle.\n\nUPI: sahilzeerak123@okhdfcbank");
+        return;
+      }
+      ['accName','accNumber','ifsc'].forEach(id => localStorage.setItem(id, document.getElementById(id).value.trim()));
+      saved.balance -= amt;
+      localStorage.setItem('casinoUser', JSON.stringify(saved));
+      updateKPI();
+      alert(`₹${amt} withdrawn successfully`);
+      modal.style.display = 'none';
+    };
   </script>
 </body>
 </html>
