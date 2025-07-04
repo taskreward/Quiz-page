@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Casino Dashboard</title>
   <style>
+    /* Your original CSS unchanged */
     :root {
       --bg: #121212; --card-bg: #1E2430;
       --text-primary: #E0E3E8; --text-secondary: #A0A8B0;
@@ -43,6 +44,7 @@
     .task-meta { margin-top: 4px; font-size: 0.85rem; color: var(--text-secondary); }
     .btn-claim { padding: 10px 20px; background: var(--accent-gold); color: var(--bg); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
     .btn-claim:disabled { background: #666; color: #ccc; cursor: not-allowed; }
+    /* Modal styles unchanged */
     .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
     .modal-content { background: var(--card-bg); padding: 20px; margin: 10% auto; border-radius: 8px; width: 90%; max-width: 360px; color: var(--text-primary); position: relative; }
     .close { position: absolute; top: 12px; right: 16px; font-size: 1.2rem; cursor: pointer; }
@@ -110,8 +112,7 @@
   </div>
 
   <script>
-    // Your existing task/login/dashboard code unchanged...
-    // (loginUser, showDashboard, renderTasks, withdraw handling, etc.)
+    // Your existing JS (loginUser, showDashboard, renderTasks, withdraw logic) stays entirely as before...
   </script>
 
   <!-- ─── Rotating Live‑Feed Script ─── -->
@@ -141,9 +142,9 @@
     });
 
     let idx = 0;
-    const feed = document.querySelector('.live-feed');
+    const feedEl = document.querySelector('.live-feed');
     setInterval(() => {
-      feed.textContent = messages[idx];
+      feedEl.textContent = messages[idx];
       idx = (idx + 1) % messages.length;
     }, 4000);
   </script>
