@@ -242,7 +242,9 @@
       <button data-tab="monthly">Monthly</button>
     </nav>
 
-    <div class="live-feed" id="liveFeed">🎉 Ravi just won ₹500!</div>
+    <!-- Updated live-feed -->
+    <div class="live-feed" id="liveFeed">🎉 Ravi just withdrew ₹2,500!</div>
+
     <ul id="task-list" class="task-list"></ul>
   </div>
 
@@ -270,7 +272,6 @@
       dashDiv.classList.remove('hidden');
     }
 
-    // Avatar upload setup
     function setupAvatar(labId, inpId, imgId, phId) {
       const lab = document.getElementById(labId);
       const inp = document.getElementById(inpId);
@@ -329,13 +330,17 @@
       const u = (logged ? localStorage : sessionStorage).getItem('username');
       const em = (logged ? localStorage : sessionStorage).getItem('email');
       if (!u || !em) {
-        showLogin(); return;
+        showLogin();
+        return;
       }
       document.getElementById('displayUsername').textContent = u;
       document.getElementById('displayMeta').textContent = `ID: 3038792 | ${em} | VIP0`;
       showDash();
       animateBalance();
       renderTasks('daily');
+      // Start live-feed updates
+      updateLiveFeed();
+      setInterval(updateLiveFeed, 4000);
     }
 
     function animateBalance() {
@@ -417,30 +422,27 @@
       };
     });
 
-    // Live-feed cycling names + ₹ amounts
-    (function(){
-      const names = [
-        "Ravi","Priya","Amit","Sneha","Rahul","Ananya","Vikas","Neha","Sanjay","Pooja",
-        "Arjun","Kavya","Manish","Isha","Sunil","Mira","Raj","Dia","Karan","Anika",
-        "Deepak","Riya","Aakash","Sanya","Nikhil","Tara","Vivek","Aarti","Kunal","Meera",
-        "Sachin","Swati","Aman","Nisha","Rohit","Pooja","Aditya","Shreya","Kapil","Dhara",
-        "Mohit","Radhika","Tarun","Kiara","Suresh","Nikita","Jatin","Ayesha","Praveen","Isha"
-      ];
-      const feedEl = document.getElementById('liveFeed');
-      let idx = 0;
-      function showNext(){
-        const name = names[idx % names.length];
-        const amount = Math.random() < 0.8
-          ? Math.floor(2000 + Math.random()*1000)
-          : Math.floor(3000 + Math.random()*600);
-        feedEl.textContent = `🎉 ${name} withdrew ₹${amount}!`;
-        idx++;
-      }
-      showNext();
-      setInterval(showNext, 3000);
-    })();
+    // 50 Indian names and live-feed logic
+    const names = [
+      "Aarav","Vivaan","Aditya","Vihaan","Sai","Arjun","Krishna","Rohan","Ayaan","Kabir",
+      "Anika","Saanvi","Aadhya","Diya","Myra","Isha","Ananya","Tara","Mira","Kavya",
+      "Dhruv","Ishaan","Reyansh","Shaurya","Karthik","Rishabh","Pranav","Arnav","Ritik","Aarush",
+      "Anushka","Aarohi","Pihu","Aanya","Navya","Yashvi","Zara","Shreya","Rhea","Aarvi",
+      "Rudra","Eshan","Lakshya","Siddharth","Tejas","Aarish","Avni","Ira","Esha","Kiara"
+    ];
+    const liveElem = document.getElementById('liveFeed');
+    function pickRandom() {
+      const name = names[Math.floor(Math.random() * names.length)];
+      const amount = Math.random() < 0.8
+        ? 2000 + Math.floor(Math.random() * 1001)
+        : 3001 + Math.floor(Math.random() * 600);
+      return `🎉 ${name} just withdrew ₹${amount}!`;
+    }
+    function updateLiveFeed() {
+      liveElem.textContent = pickRandom();
+    }
 
-    // Initialize UI
+    // Initialize view
     loadDashboard();
   </script>
 </body>
