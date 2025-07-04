@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Casino Dashboard</title>
   <style>
-    /* [Your existing CSS remains identical] */
+    /* [Your original CSS unchanged] */
     :root {
       --bg: #121212;
       --card-bg: #1E2430;
@@ -111,7 +111,6 @@
       monthly: []
     };
 
-    // Tracks the time when a claim was last started
     let lastClaimTime = 0;
 
     function loginUser() {
@@ -153,9 +152,11 @@
       tasks[tab].forEach(t => {
         const li = document.createElement('li');
         li.className = 'task-card';
+
         const lastClaimed = saved.claimed[t.key] || 0;
         const isCooldown = now - lastClaimed < 25 * 60 * 60 * 1000;
         const isProcessing = saved.processing?.[t.key] && (now - saved.processing[t.key]) < 3 * 60 * 1000;
+
         const btn = document.createElement('button');
         btn.className = 'btn-claim';
         btn.textContent = isProcessing ? 'Processing...' : 'Claim';
@@ -163,9 +164,10 @@
 
         btn.onclick = () => {
           if (btn.disabled) return;
-          lastClaimTime = Date.now();
 
+          lastClaimTime = Date.now();
           window.open('https://example.com', '_blank');
+
           saved.processing = saved.processing || {};
           saved.processing[t.key] = Date.now();
           localStorage.setItem('casinoUser', JSON.stringify(saved));
@@ -199,11 +201,11 @@
     document.getElementById('avatarUpload').addEventListener('change', function(e) {
       const file = e.target.files[0];
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function(event) {
         const saved = JSON.parse(localStorage.getItem('casinoUser'));
-        saved.avatar = e.target.result;
+        saved.avatar = event.target.result;
         localStorage.setItem('casinoUser', JSON.stringify(saved));
-        document.getElementById('userAvatar').src = e.target.result;
+        document.getElementById('userAvatar').src = event.target.result;
       };
       reader.readAsDataURL(file);
     });
@@ -221,6 +223,10 @@
     });
 
     window.onload = showDashboard;
+    setInterval(() => {
+      const active = document.querySelector('nav.tabs button.active');
+      if (active) renderTasks(active.getAttribute('data-tab'));
+    }, 3000);
   </script>
 </body>
 </html>
