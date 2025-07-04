@@ -48,6 +48,52 @@
     .task-meta { margin-top: 4px; font-size: 0.85rem; color: var(--text-secondary); }
     .btn-claim { padding: 10px 20px; background: var(--accent-gold); color: var(--bg); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
     .btn-claim:disabled { background: #666; color: #ccc; cursor: not-allowed; }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background: var(--card-bg);
+      padding: 20px;
+      margin: 10% auto;
+      border-radius: 8px;
+      width: 90%; max-width: 360px;
+      color: var(--text-primary);
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .modal-body input {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #121526;
+      color: var(--text-primary);
+    }
+    #withdrawSubmit {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      background: var(--accent-gold);
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      color: var(--bg);
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -90,6 +136,22 @@
 
     <div class="live-feed">🎉 Ravi just won ₹500!</div>
     <ul id="task-list" class="task-list"></ul>
+  </div>
+
+  <!-- Withdrawal Modal -->
+  <div id="withdrawModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Withdraw Funds</h2>
+      <div class="modal-body">
+        <p>Minimum withdrawal: ₹2,000</p>
+        <input type="number" id="withdrawAmount" placeholder="Amount" min="2000" />
+        <input type="text" id="accName" placeholder="Account Holder Name" />
+        <input type="text" id="accNumber" placeholder="Account Number" />
+        <input type="text" id="ifsc" placeholder="IFSC Code" />
+        <button id="withdrawSubmit">Withdraw</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -140,47 +202,44 @@
       const s = JSON.parse(localStorage.getItem('casinoUser'));
       document.getElementById('balanceDisplay').textContent = `₹${s.balance}`;
       document.getElementById('kpiTasks').textContent = s.tasksDone;
-      document.getElementById('kpiWeekly').textContent = `₹${s.weeklyWin}`;
+      document.getElementById("kpiWeekly").textContent = `₹${s.weeklyWin}`;
     }
 
     function renderTasks(tab) {
-      const list = document.getElementById('task-list');
-      list.innerHTML = '';
-      const saved = JSON.parse(localStorage.getItem('casinoUser'));
+      const list = document.getElementById("task-list");
+      list.innerHTML = "";
+      const saved = JSON.parse(localStorage.getItem("casinoUser"));
       const now = Date.now();
 
       tasks[tab].forEach(t => {
-        const li = document.createElement('li');
-        li.className = 'task-card';
+        const li = document.createElement("li");
+        li.className = "task-card";
 
         const lastClaimed = saved.claimed[t.key] || 0;
         const isCooldown = now - lastClaimed < 25 * 60 * 60 * 1000;
         const isProcessing = saved.processing?.[t.key] && (now - saved.processing[t.key]) < 3 * 60 * 1000;
 
-        const btn = document.createElement('button');
-        btn.className = 'btn-claim';
-        btn.textContent = isProcessing ? 'Processing...' : 'Claim';
+        const btn = document.createElement("button");
+        btn.className = "btn-claim";
+        btn.textContent = isProcessing ? "Processing..." : "Claim";
         btn.disabled = isCooldown || isProcessing || (lastClaimTime && (now - lastClaimTime) < 30000);
 
         btn.onclick = () => {
           if (btn.disabled) return;
-
           lastClaimTime = Date.now();
-          window.open('https://example.com', '_blank');
-
+          window.open("https://example.com", "_blank");
           saved.processing = saved.processing || {};
           saved.processing[t.key] = Date.now();
-          localStorage.setItem('casinoUser', JSON.stringify(saved));
+          localStorage.setItem("casinoUser", JSON.stringify(saved));
           renderTasks(tab);
-
           setTimeout(() => {
-            const updated = JSON.parse(localStorage.getItem('casinoUser'));
+            const updated = JSON.parse(localStorage.getItem("casinoUser"));
             updated.balance += t.reward;
             updated.tasksDone++;
             updated.weeklyWin += t.reward;
             updated.claimed[t.key] = Date.now();
             delete updated.processing[t.key];
-            localStorage.setItem('casinoUser', JSON.stringify(updated));
+            localStorage.setItem("casinoUser", JSON.stringify(updated));
             updateKPI();
             renderTasks(tab);
           }, 180000);
@@ -198,35 +257,52 @@
       });
     }
 
-    document.getElementById('avatarUpload').addEventListener('change', function(e) {
+    document.getElementById("avatarUpload").addEventListener("change", function(e) {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = function(event) {
-        const saved = JSON.parse(localStorage.getItem('casinoUser'));
+        const saved = JSON.parse(localStorage.getItem("casinoUser"));
         saved.avatar = event.target.result;
-        localStorage.setItem('casinoUser', JSON.stringify(saved));
-        document.getElementById('userAvatar').src = event.target.result;
+        localStorage.setItem("casinoUser", JSON.stringify(saved));
+        document.getElementById("userAvatar").src = event.target.result;
       };
       reader.readAsDataURL(file);
     });
 
-    document.querySelector('.avatar-small').addEventListener('click', () => {
-      document.getElementById('avatarUpload').click();
+    document.querySelector(".avatar-small").addEventListener("click", () => {
+      document.getElementById("avatarUpload").click();
     });
 
-    document.querySelectorAll('nav.tabs button').forEach(btn => {
+    document.querySelectorAll("nav.tabs button").forEach(btn => {
       btn.onclick = () => {
-        document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderTasks(btn.getAttribute('data-tab'));
+        document.querySelectorAll("nav.tabs button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderTasks(btn.getAttribute("data-tab"));
       };
     });
 
+    // Auto-refresh
     window.onload = showDashboard;
     setInterval(() => {
-      const active = document.querySelector('nav.tabs button.active');
-      if (active) renderTasks(active.getAttribute('data-tab'));
+      const active = document.querySelector("nav.tabs button.active");
+      if (active) renderTasks(active.getAttribute("data-tab"));
     }, 3000);
+
+    // Withdraw modal logic
+    const modal = document.getElementById("withdrawModal");
+    const btn = document.querySelector('.withdraw-btn');
+    const span = modal.querySelector(".close");
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+    ['accName','accNumber','ifsc'].forEach(id => {
+      const el = document.getElementById(id);
+      const val = localStorage.getItem(id);
+      if (val) el.value = val;
+    });
+
+    document.getElementById('withdrawSubmit').onclick = () => { /* withdrawal logic */ };
   </script>
 </body>
 </html>
