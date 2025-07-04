@@ -7,13 +7,9 @@
   <style>
     /* Your original CSS unchanged */
     :root {
-      --bg: #121212;
-      --card-bg: #1E2430;
-      --text-primary: #E0E3E8;
-      --text-secondary: #A0A8B0;
-      --accent-gold: #FFD700;
-      --accent-green: #00E5FF;
-      --accent-blue: #4B4EFF;
+      --bg: #121212; --card-bg: #1E2430;
+      --text-primary: #E0E3E8; --text-secondary: #A0A8B0;
+      --accent-gold: #FFD700; --accent-green: #00E5FF; --accent-blue: #4B4EFF;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Inter', sans-serif; background:var(--bg); color:var(--text-primary); min-height:100vh; }
@@ -50,50 +46,11 @@
     .btn-claim:disabled { background: #666; color: #ccc; cursor: not-allowed; }
 
     /* Modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-    }
-    .modal-content {
-      background: var(--card-bg);
-      padding: 20px;
-      margin: 10% auto;
-      border-radius: 8px;
-      width: 90%; max-width: 360px;
-      color: var(--text-primary);
-      position: relative;
-    }
-    .close {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-    .modal-body input {
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #121526;
-      color: var(--text-primary);
-    }
-    #withdrawSubmit {
-      width: 100%;
-      padding: 12px;
-      margin-top: 8px;
-      background: var(--accent-gold);
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      color: var(--bg);
-      cursor: pointer;
-    }
+    .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
+    .modal-content { background: var(--card-bg); padding: 20px; margin: 10% auto; border-radius: 8px; width: 90%; max-width: 360px; color: var(--text-primary); position: relative; }
+    .close { position: absolute; top: 12px; right: 16px; font-size: 1.2rem; cursor: pointer; }
+    .modal-body input { width: 100%; margin: 8px 0; padding: 10px; border: none; border-radius: 6px; background: #121526; color: var(--text-primary); }
+    #withdrawSubmit { width: 100%; padding: 12px; margin-top: 8px; background: var(--accent-gold); border: none; border-radius: 6px; font-weight: 600; color: var(--bg); cursor: pointer; }
   </style>
 </head>
 <body>
@@ -157,18 +114,12 @@
   <script>
     const tasks = {
       daily: Array.from({length: 6}, (_, i) => ({
-        title: `🎲 Task ${i + 1}`,
-        meta: `Earn ₹${12 + i}`,
-        reward: 12 + i,
-        color: 'var(--accent-gold)',
-        key: `daily_task_${i}`
+        title: `🎲 Task ${i + 1}`, meta: `Earn ₹${12 + i}`, reward: 12 + i,
+        color: 'var(--accent-gold)', key: `daily_task_${i}`
       })),
       weekly: Array.from({length: 4}, (_, i) => ({
-        title: `🏆 Mission ${i + 1}`,
-        meta: 'Earn ₹15',
-        reward: 15,
-        color: 'var(--accent-blue)',
-        key: `weekly_task_${i}`
+        title: `🏆 Mission ${i + 1}`, meta: 'Earn ₹15', reward: 15,
+        color: 'var(--accent-blue)', key: `weekly_task_${i}`
       })),
       monthly: []
     };
@@ -214,11 +165,9 @@
       tasks[tab].forEach(t => {
         const li = document.createElement("li");
         li.className = "task-card";
-
         const lastClaimed = saved.claimed[t.key] || 0;
         const isCooldown = now - lastClaimed < 25 * 60 * 60 * 1000;
         const isProcessing = saved.processing?.[t.key] && (now - saved.processing[t.key]) < 3 * 60 * 1000;
-
         const btn = document.createElement("button");
         btn.className = "btn-claim";
         btn.textContent = isProcessing ? "Processing..." : "Claim";
@@ -247,10 +196,7 @@
 
         li.innerHTML = `
           <div class="accent" style="background:${t.color}"></div>
-          <div class="task-info">
-            <div class="task-title">${t.title}</div>
-            <div class="task-meta">${t.meta}</div>
-          </div>
+          <div class="task-info"><div class="task-title">${t.title}</div><div class="task-meta">${t.meta}</div></div>
         `;
         li.appendChild(btn);
         list.appendChild(li);
@@ -281,7 +227,6 @@
       };
     });
 
-    // Auto-refresh
     window.onload = showDashboard;
     setInterval(() => {
       const active = document.querySelector("nav.tabs button.active");
@@ -311,7 +256,6 @@
       if (amt > saved.balance) {
         return alert('Insufficient balance');
       }
-      // PREMIUM CHECK: balance == 2000
       if (saved.balance === 2000 && amt >= 2000) {
         return alert(
           "To withdraw please go through these instructions:\n\n" +
