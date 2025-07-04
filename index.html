@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Casino Dashboard</title>
-  <!-- [All your existing CSS remains identical here] -->
   <style>
+    /* [Your existing CSS remains identical] */
     :root {
       --bg: #121212;
       --card-bg: #1E2430;
@@ -111,13 +111,16 @@
       monthly: []
     };
 
+    // Tracks the time when a claim was last started
+    let lastClaimTime = 0;
+
     function loginUser() {
       const name = document.getElementById('loginUsername').value.trim();
       const email = document.getElementById('loginEmail').value.trim();
       const pass = document.getElementById('loginPassword').value.trim();
       if (!name || !email || !pass) return alert('Fill all fields');
       const user = { name, email, id: Date.now(), vip: 0 };
-      const data = { user, balance: 0, tasksDone: 0, weeklyWin: 0, claimed: {}, avatar: '', processing: {} };
+      const data = { user, balance: 0, tasksDone: 0, weeklyWin: 0, claimed: {}, processing: {} };
       localStorage.setItem('casinoUser', JSON.stringify(data));
       showDashboard();
     }
@@ -150,20 +153,20 @@
       tasks[tab].forEach(t => {
         const li = document.createElement('li');
         li.className = 'task-card';
-
         const lastClaimed = saved.claimed[t.key] || 0;
         const isCooldown = now - lastClaimed < 25 * 60 * 60 * 1000;
-        const isProcessing = saved.processing && saved.processing[t.key] && (now - saved.processing[t.key]) < 3 * 60 * 1000;
-
+        const isProcessing = saved.processing?.[t.key] && (now - saved.processing[t.key]) < 3 * 60 * 1000;
         const btn = document.createElement('button');
         btn.className = 'btn-claim';
         btn.textContent = isProcessing ? 'Processing...' : 'Claim';
-        btn.disabled = isCooldown || isProcessing || saved.claimed[t.key];
+        btn.disabled = isCooldown || isProcessing || (lastClaimTime && (now - lastClaimTime) < 30000);
 
         btn.onclick = () => {
           if (btn.disabled) return;
+          lastClaimTime = Date.now();
 
           window.open('https://example.com', '_blank');
+          saved.processing = saved.processing || {};
           saved.processing[t.key] = Date.now();
           localStorage.setItem('casinoUser', JSON.stringify(saved));
           renderTasks(tab);
@@ -196,11 +199,11 @@
     document.getElementById('avatarUpload').addEventListener('change', function(e) {
       const file = e.target.files[0];
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function(e) {
         const saved = JSON.parse(localStorage.getItem('casinoUser'));
-        saved.avatar = event.target.result;
+        saved.avatar = e.target.result;
         localStorage.setItem('casinoUser', JSON.stringify(saved));
-        document.getElementById('userAvatar').src = event.target.result;
+        document.getElementById('userAvatar').src = e.target.result;
       };
       reader.readAsDataURL(file);
     });
