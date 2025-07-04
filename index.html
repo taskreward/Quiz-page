@@ -205,12 +205,38 @@
       reader.readAsDataURL(file);
     });
 
-    document.querySelector('.avatar-small').addEventListener('click', () => document.getElementById('avatarUpload').click());
-    document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
-      document.querySelectorAll('nav.tabs button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      renderTasks(b.getAttribute('data-tab'));
-    }));
+    document.querySelectorAll('.tabs button').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const tab = btn.dataset.tab;
+
+    if (tab === 'instructions') {
+      // Static content for Instructions tab
+      document.getElementById('task-list').innerHTML = `
+        <div class="task-card" style="flex-direction: column; align-items: flex-start;">
+          <div class="task-title" style="margin-bottom: 12px;">🔥 How to Earn More</div>
+          <div class="task-meta">1. All tasks will be refreshed tomorrow – come back daily for new opportunities.</div>
+          <div class="task-meta">2. You can withdraw once your balance reaches the minimum withdrawal amount or more.</div>
+          <div class="task-meta">3. Complete every task to earn maximum rewards and unlock new bonus.</div>
+
+          <div class="task-title" style="margin: 16px 0 8px;">⚠️ Important</div>
+          <div class="task-meta">1. No earnings will be credited if you leave a task incomplete.</div>
+          <div class="task-meta">2. When claiming a task, do not stop midway — only exit after you see "Tasks Completed" confirmation.</div>
+
+          <div class="task-title" style="margin: 16px 0 8px;">💸 Tips for Withdrawal</div>
+          <div class="task-meta">1. Withdrawals are allowed once your balance meets or exceeds the minimum threshold.</div>
+          <div class="task-meta">2. Payouts are processed within 2 business days from the request date.</div>
+          <div class="task-meta">3. Please do not contact support about payments before the expected timeline.</div>
+          <div class="task-meta">4. Ensure all your Account Details (including payment method and payment ID) are accurately filled in to avoid issues.</div>
+        </div>
+      `;
+    } else {
+      renderTasks(tab);
+    }
+  };
+});
 
     window.onload = showDashboard;
     setInterval(() => {
