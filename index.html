@@ -6,7 +6,6 @@
 
   <title>Casino Dashboard</title>
   <style>
-    /* Your original CSS unchanged */
     :root {
       --bg: #121212; --card-bg: #1E2430;
       --text-primary: #E0E3E8; --text-secondary: #A0A8B0;
@@ -49,6 +48,11 @@
     .modal-content { background: var(--card-bg); padding: 20px; margin: 10% auto; border-radius: 8px; width: 90%; max-width: 360px; color: var(--text-primary); position: relative; }
     .close { position: absolute; top: 12px; right: 16px; font-size: 1.2rem; cursor: pointer; }
     .modal-body input { width: 100%; margin: 8px 0; padding: 10px; border: none; border-radius: 6px; background: #121526; color: var(--text-primary); }
+    /* new */
+    .modal-body .option-group { display: flex; gap: 12px; margin-bottom: 12px; }
+    .modal-body .option-group input { display: none; }
+    .modal-body .option-group label { flex: 1; padding: 8px; background: var(--card-bg); border: 1px solid var(--text-secondary); border-radius: 6px; text-align: center; cursor: pointer; }
+    .modal-body .option-group input:checked + label { border-color: var(--accent-gold); background: rgba(255,215,0,0.1); }
     #withdrawSubmit { width: 100%; padding: 12px; margin-top: 8px; background: var(--accent-gold); border: none; border-radius: 6px; font-weight: 600; color: var(--bg); cursor: pointer; }
     .withdraw-error { color: #FF4D4F; font-size: 0.85rem; margin: 6px 0 0; text-align: center; opacity: 0; transition: opacity 0.3s ease; }
     .withdraw-error.visible { opacity: 1; }
@@ -101,10 +105,22 @@
       <span class="close">&times;</span>
       <h2>Withdraw Funds</h2>
       <div class="modal-body">
+        <!-- method selector -->
+        <div class="option-group">
+          <input type="radio" name="withdrawType" id="typeBank" value="bank" checked>
+          <label for="typeBank">Bank Transfer</label>
+          <input type="radio" name="withdrawType" id="typePaypal" value="paypal">
+          <label for="typePaypal">PayPal</label>
+        </div>
         <input type="number" id="withdrawAmount" placeholder="Amount" min="1000"/>
-        <input type="text" id="accName" placeholder="Account Holder Name"/>
-        <input type="text" id="accNumber" placeholder="Account Number"/>
-        <input type="text" id="ifsc" placeholder="Routing Number"/>
+        <div id="bankFields">
+          <input type="text" id="accName" placeholder="Account Holder Name"/>
+          <input type="text" id="accNumber" placeholder="Account Number"/>
+          <input type="text" id="ifsc" placeholder="Routing Number"/>
+        </div>
+        <div id="paypalFields" class="hidden">
+          <input type="email" id="paypalEmail" placeholder="PayPal Email"/>
+        </div>
         <div id="withdrawError" class="withdraw-error">Minimum withdrawal is $1,000</div>
         <button id="withdrawSubmit">Withdraw</button>
       </div>
@@ -114,191 +130,193 @@
   <script>
     const tasks = {
       daily: [
-        { key: 'daily_task_0', title: '🎲 Task 1', meta: 'Earn $3', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
-        { key: 'daily_task_1', title: '🎲 Task 2', meta: 'Earn $2', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
-        { key: 'daily_task_2', title: '🎲 Task 3', meta: 'Earn $3', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
-        { key: 'daily_task_3', title: '🎲 Task 4', meta: 'Earn $4', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
-        { key: 'daily_task_4', title: '🎲 Task 5', meta: 'Earn $3', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' },
-        { key: 'daily_task_5', title: '🎲 Task 6', meta: 'Earn $2', reward: 17, color: 'var(--accent-gold)', url: 'https://gplinks.co/vuL15RO' }
+        { key:'daily_task_0', title:'🎲 Task 1', meta:'Earn $3', reward:3, color:'var(--accent-gold)', url:'https://gplinks.co/u8YjR' },
+        { key:'daily_task_1', title:'🎲 Task 2', meta:'Earn $4', reward:4, color:'var(--accent-gold)', url:'https://gplinks.co/daoZXJS' },
+        { key:'daily_task_2', title:'🎲 Task 3', meta:'Earn $5', reward:5, color:'var(--accent-gold)', url:'https://gplinks.co/MyUu8' },
+        { key:'daily_task_3', title:'🎲 Task 4', meta:'Earn $3', reward:3, color:'var(--accent-gold)', url:'https://gplinks.co/vwBE8UJ' },
+        { key:'daily_task_4', title:'🎲 Task 5', meta:'Earn $4', reward:4, color:'var(--accent-gold)', url:'https://gplinks.co/tpxgBwr' },
+        { key:'daily_task_5', title:'🎲 Task 6', meta:'Earn $5', reward:5, color:'var(--accent-gold)', url:'https://gplinks.co/vuL15RO' }
       ],
       weekly: [
-        { key: 'weekly_task_0', title: '🏆 Mission 1', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
-        { key: 'weekly_task_1', title: '🏆 Mission 2', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
-        { key: 'weekly_task_2', title: '🏆 Mission 3', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
-        { key: 'weekly_task_3', title: '🏆 Mission 4', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
+        { key:'weekly_task_0', title:'🏆 Mission 1', meta:'Earn $5', reward:5, color:'var(--accent-blue)', url:'https://gplinks.co/aG4wyN' },
+        { key:'weekly_task_1', title:'🏆 Mission 2', meta:'Earn $5', reward:5, color:'var(--accent-blue)', url:'https://gplinks.co/xtYbL7' },
+        { key:'weekly_task_2', title:'🏆 Mission 3', meta:'Earn $5', reward:5, color:'var(--accent-blue)', url:'https://gplinks.co/I8XK8U' },
+        { key:'weekly_task_3', title:'🏆 Mission 4', meta:'Earn $5', reward:5, color:'var(--accent-blue)', url:'https://gplinks.co/HBLM6r' }
       ],
       monthly: []
     };
     let lastClaimTime = 0;
 
     function loginUser() {
-      const name = document.getElementById('loginUsername').value.trim();
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPassword').value.trim();
-      if (!name || !email || !pass) return alert('Fill all fields');
-      const user = { name, email, id: Date.now(), vip: 0 };
-      const data = { user, balance: 0, tasksDone: 0, weeklyWin: 0, claimed: {}, processing: {} };
-      localStorage.setItem('casinoUser', JSON.stringify(data));
+      const name=document.getElementById('loginUsername').value.trim();
+      const email=document.getElementById('loginEmail').value.trim();
+      const pass=document.getElementById('loginPassword').value.trim();
+      if(!name||!email||!pass) return alert('Fill all fields');
+      const user={name,email,id:Date.now(),vip:0};
+      const data={user,balance:0,tasksDone:0,weeklyWin:0,claimed:{},processing:{}};
+      localStorage.setItem('casinoUser',JSON.stringify(data));
       showDashboard();
     }
 
-    function showDashboard() {
-      const saved = JSON.parse(localStorage.getItem('casinoUser'));
-      if (!saved) return;
+    function showDashboard(){
+      const saved=JSON.parse(localStorage.getItem('casinoUser'));
+      if(!saved) return;
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('dashboardPage').classList.remove('hidden');
-      document.getElementById('displayUsername').textContent = saved.user.name;
-      document.getElementById('displayMeta').textContent = `ID: ${saved.user.id} | ${saved.user.email} | VIP${saved.user.vip}`;
-      if (saved.avatar) document.getElementById('userAvatar').src = saved.avatar;
+      document.getElementById('displayUsername').textContent=saved.user.name;
+      document.getElementById('displayMeta').textContent=`ID: ${saved.user.id} | ${saved.user.email} | VIP${saved.user.vip}`;
+      if(saved.avatar) document.getElementById('userAvatar').src=saved.avatar;
       updateKPI();
       renderTasks('daily');
     }
 
-    function updateKPI() {
-      const s = JSON.parse(localStorage.getItem('casinoUser'));
-      document.getElementById('balanceDisplay').textContent = `$${s.balance}`;
-      document.getElementById('kpiTasks').textContent = s.tasksDone;
-      document.getElementById('kpiWeekly').textContent = `$${s.weeklyWin}`;
+    function updateKPI(){
+      const s=JSON.parse(localStorage.getItem('casinoUser'));
+      document.getElementById('balanceDisplay').textContent=`$${s.balance}`;
+      document.getElementById('kpiTasks').textContent=s.tasksDone;
+      document.getElementById('kpiWeekly').textContent=`$${s.weeklyWin}`;
     }
 
-    function renderTasks(tab) {
-      if (tab === 'instructions') return;
-      const list = document.getElementById('task-list');
-      list.innerHTML = '';
-      const saved = JSON.parse(localStorage.getItem('casinoUser'));
-      const now = Date.now();
-      tasks[tab].forEach(t => {
-        const li = document.createElement('li');
-        li.className = 'task-card';
-        const lastClaimed = saved.claimed[t.key] || 0;
-        const isCooldown = now - lastClaimed < 25*60*60*1000;
-        const isProcessing = saved.processing?.[t.key] && (now - saved.processing[t.key]) < 3*60*1000;
-        const btn = document.createElement('button');
-        btn.className = 'btn-claim';
-        btn.textContent = isProcessing ? 'Processing...' : 'Claim';
-        btn.disabled = isCooldown || isProcessing || (lastClaimTime && (now - lastClaimTime) < 30000);
-        btn.onclick = () => {
-          if (btn.disabled) return;
-          lastClaimTime = Date.now();
-          window.open(t.url, '_blank');
-          saved.processing = saved.processing || {}; saved.processing[t.key] = Date.now();
-          localStorage.setItem('casinoUser', JSON.stringify(saved));
+    function renderTasks(tab){
+      if(tab==='instructions') return;
+      const list=document.getElementById('task-list');
+      list.innerHTML='';
+      const saved=JSON.parse(localStorage.getItem('casinoUser'));
+      const now=Date.now();
+      tasks[tab].forEach(t=>{
+        const li=document.createElement('li'); li.className='task-card';
+        const lastClaimed=saved.claimed[t.key]||0;
+        const isCooldown=now-lastClaimed<24*60*60*1000;
+        const isProcessing=saved.processing?.[t.key]&&(now-saved.processing[t.key]<3*60*1000);
+        const btn=document.createElement('button');
+        btn.className='btn-claim';
+        btn.textContent=isProcessing?'Processing...':'Claim';
+        btn.disabled=isCooldown||isProcessing||(lastClaimTime&&(now-lastClaimTime<30*1000));
+        btn.onclick=()=>{
+          if(btn.disabled) return;
+          lastClaimTime=Date.now();
+          window.open(t.url,'_blank');
+          saved.processing=saved.processing||{}; saved.processing[t.key]=Date.now();
+          localStorage.setItem('casinoUser',JSON.stringify(saved));
           renderTasks(tab);
-          setTimeout(() => {
-            const updated = JSON.parse(localStorage.getItem('casinoUser'));
-            updated.balance += t.reward;
+          setTimeout(()=>{
+            const updated=JSON.parse(localStorage.getItem('casinoUser'));
+            updated.balance+=t.reward;
             updated.tasksDone++;
-            updated.weeklyWin += t.reward;
-            updated.claimed[t.key] = Date.now();
+            updated.weeklyWin+=t.reward;
+            updated.claimed[t.key]=Date.now();
             delete updated.processing[t.key];
-            localStorage.setItem('casinoUser', JSON.stringify(updated));
+            localStorage.setItem('casinoUser',JSON.stringify(updated));
             updateKPI();
             renderTasks(tab);
-          }, 180000);
+          },3*60*1000);
         };
-        li.innerHTML = `<div class="accent" style="background:${t.color}"></div><div class="task-info"><div class="task-title">${t.title}</div><div class="task-meta">${t.meta}</div></div>`;
+        li.innerHTML=`<div class="accent" style="background:${t.color}"></div><div class="task-info"><div class="task-title">${t.title}</div><div class="task-meta">${t.meta}</div></div>`;
         li.appendChild(btn);
         list.appendChild(li);
       });
     }
 
-    document.getElementById('avatarUpload').addEventListener('change', e => {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const saved = JSON.parse(localStorage.getItem('casinoUser'));
-        saved.avatar = ev.target.result;
-        localStorage.setItem('casinoUser', JSON.stringify(saved));
-        document.getElementById('userAvatar').src = ev.target.result;
+    document.getElementById('avatarUpload').addEventListener('change',e=>{
+      const file=e.target.files[0], reader=new FileReader();
+      reader.onload=ev=>{
+        const saved=JSON.parse(localStorage.getItem('casinoUser'));
+        saved.avatar=ev.target.result;
+        localStorage.setItem('casinoUser',JSON.stringify(saved));
+        document.getElementById('userAvatar').src=ev.target.result;
       };
       reader.readAsDataURL(file);
     });
 
-    document.querySelectorAll('.tabs button').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabs button').forEach(btn=>{
+      btn.onclick=()=>{
+        document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
-        const tab = btn.dataset.tab;
-        if (tab === 'instructions') {
-          document.getElementById('task-list').innerHTML = `
+        const tab=btn.dataset.tab;
+        if(tab==='instructions'){
+          document.getElementById('task-list').innerHTML=`
             <div class="task-card" style="flex-direction: column; align-items: flex-start;">
               <div class="task-title" style="margin-bottom: 12px;">🔥 How to Earn More</div>
-              <div class="task-meta">1. All tasks will be refreshed tomorrow – come back daily for new opportunities.</div>
-              <div class="task-meta">2. You can withdraw once your balance reaches the minimum withdrawal amount or more.</div>
-              <div class="task-meta">3. Complete every task to earn maximum rewards and unlock new bonus.</div>
+              <div class="task-meta">1. All tasks refresh daily.</div>
+              <div class="task-meta">2. Withdraw once balance ≥ min threshold.</div>
+              <div class="task-meta">3. Complete every task for max rewards.</div>
               <div class="task-title" style="margin: 16px 0 8px;">⚠️ Important</div>
-              <div class="task-meta">1. No earnings will be credited if you leave a task incomplete.</div>
-              <div class="task-meta">2. When claiming a task, do not stop midway — only exit after you see \"Tasks Completed\" confirmation.</div>
-              <div class="task-title" style="margin: 16px 0 8px;">💸 Tips for Withdrawal</div>
-              <div class="task-meta">1. Withdrawals are allowed once your balance meets or exceeds the minimum threshold.</div>
-              <div class="task-meta">2. Payouts are processed within 2 business days from the request date.</div>
-              <div class="task-meta">3. Please do not contact support about payments before the expected timeline.</div>
-              <div class="task-meta">4. Ensure all your Account Details (including payment method and payment ID) are accurately filled in to avoid issues.</div>
-            </div>
-          `;
-        } else {
-          renderTasks(tab);
-        }
+              <div class="task-meta">1. Incomplete tasks yield no rewards.</div>
+              <div class="task-meta">2. Stay until “Tasks Completed” screen.</div>
+              <div class="task-title" style="margin: 16px 0 8px;">💸 Withdrawal Tips</div>
+              <div class="task-meta">1. Withdrawals processed within 2 business days.</div>
+              <div class="task-meta">2. Ensure payment details are correct.</div>
+            </div>`;
+        } else renderTasks(tab);
       };
     });
 
-    window.onload = showDashboard;
-    setInterval(() => {
-      const active = document.querySelector('nav.tabs button.active');
-      if (active) renderTasks(active.getAttribute('data-tab'));
-    }, 3000);
+    // Open/close withdraw modal
+    const modal=document.getElementById('withdrawModal');
+    const btnW=document.querySelector('.withdraw-btn');
+    const span=modal.querySelector('.close');
+    btnW.onclick=()=>modal.style.display='block';
+    span.onclick=()=>modal.style.display='none';
+    window.onclick=e=>{ if(e.target===modal) modal.style.display='none'; };
 
-    const modal = document.getElementById('withdrawModal');
-    const btnW = document.querySelector('.withdraw-btn');
-    const span = modal.querySelector('.close');
-    btnW.onclick = () => modal.style.display = 'block';
-    span.onclick = () => modal.style.display = 'none';
-    window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
-
-    ['accName','accNumber','ifsc'].forEach(id => {
-      const el = document.getElementById(id);
-      const v = localStorage.getItem(id);
-      if (v) el.value = v;
+    // Toggle fields
+    document.querySelectorAll('input[name="withdrawType"]').forEach(radio=>{
+      radio.onchange=()=>{
+        document.getElementById('bankFields').classList.toggle('hidden', radio.value==='paypal');
+        document.getElementById('paypalFields').classList.toggle('hidden', radio.value==='bank');
+      };
     });
 
-    document.getElementById('withdrawSubmit').onclick = () => {
-      const errorEl = document.getElementById('withdrawError');
-      const amt = parseFloat(document.getElementById('withdrawAmount').value);
-      if (isNaN(amt) || amt < 2000) {
-        errorEl.classList.add('visible');
-        setTimeout(() => errorEl.classList.remove('visible'), 3000);
-        return;
-      }
-      const saved = JSON.parse(localStorage.getItem('casinoUser'));
-      if (amt > saved.balance) { alert('Insufficient balance'); return; }
-      if (saved.balance === 2000 && amt >= 2000) {
-        alert("To withdraw please go through these instructions:\n\nTo withdraw you need to get premium. Your level is VIP 0.\nPlease pay $399 to get premium and withdraw your cash without verification or any hustle.\n\nUPI: sahilzeerak123@okhdfcbank");
-        return;
-      }
-      ['accName','accNumber','ifsc'].forEach(id => localStorage.setItem(id, document.getElementById(id).value.trim()));
-      saved.balance -= amt;
-      localStorage.setItem('casinoUser', JSON.stringify(saved));
-      updateKPI();
-      alert(`$${amt} withdrawn successfully`);
-      modal.style.display = 'none';
-    };
-  </script>
-
-  <!-- Rotating Live‑Feed (50 names, $2k–$4k) -->
-  <script>
-    (function() {
-      const names = ['Arjun','Vihaan','Rohan','Aarav','Kabir','Advait','Ishaan','Krishna','Ritik','Neel','Shaurya','Vivaan','Atharv','Ayaan','Reyansh','Kunal','Darsh','Sahil','Yash','Ansh','Diya','Aanya','Ira','Anika','Meera','Kiara','Saanvi','Riya','Tara','Mira','Sara','Anaya','Aadhya','Kavya','Nisha','Jiya','Shreya','Pallavi','Aditi','Lavya','Tanvi','Radhika','Naina','Pooja','Priya','Neha','Sneha','Sanya','Bhavya','Tanya'];
-      function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-      const msgs = names.map(n => {
-        const amt = Math.random()<0.7 ? randInt(2000,3000) : randInt(3001,4000);
-        return `🎉 ${n} withdraws $${amt}!`;
+    // Prefill stored
+    window.addEventListener('load',()=>{
+      ['accName','accNumber','ifsc'].forEach(id=>{
+        const v=localStorage.getItem(id);
+        if(v) document.getElementById(id).value=v;
       });
+      const pp=localStorage.getItem('paypalEmail');
+      if(pp) document.getElementById('paypalEmail').value=pp;
+    });
+
+    // Withdraw submit
+    document.getElementById('withdrawSubmit').onclick=()=>{
+      const amt=parseFloat(document.getElementById('withdrawAmount').value);
+      if(isNaN(amt)||amt<1000){
+        document.getElementById('withdrawError').classList.add('visible');
+        setTimeout(()=>document.getElementById('withdrawError').classList.remove('visible'),3000);
+        return;
+      }
+      const data=JSON.parse(localStorage.getItem('casinoUser'));
+      if(amt>data.balance){ alert('Insufficient balance'); return; }
+      const method=document.querySelector('input[name="withdrawType"]:checked').value;
+      if(method==='bank'){
+        const n=document.getElementById('accName').value.trim();
+        const nu=document.getElementById('accNumber').value.trim();
+        const i=document.getElementById('ifsc').value.trim();
+        if(!n||!nu||!i){ alert('Fill all bank details'); return; }
+        ['accName','accNumber','ifsc'].forEach(id=>localStorage.setItem(id,document.getElementById(id).value.trim()));
+      } else {
+        const e=document.getElementById('paypalEmail').value.trim();
+        if(!e){ alert('Enter your PayPal email'); return; }
+        localStorage.setItem('paypalEmail',e);
+      }
+      data.balance-=amt;
+      localStorage.setItem('casinoUser',JSON.stringify(data));
+      updateKPI();
+      alert(`$${amt} withdrawn via ${method==='bank'?'Bank Transfer':'PayPal'}`);
+      modal.style.display='none';
+    };
+
+    // Rotating live feed
+    (function(){
+      const names=['Arjun','Vihaan','Rohan','Aarav','Kabir','Advait','Ishaan','Krishna','Ritik','Neel','Shaurya','Vivaan','Atharv','Ayaan','Reyansh','Kunal','Darsh','Sahil','Yash','Ansh','Diya','Aanya','Ira','Anika','Meera','Kiara','Saanvi','Riya','Tara','Mira','Sara','Anaya','Aadhya','Kavya','Nisha','Jiya','Shreya','Pallavi','Aditi','Lavya','Tanvi','Radhika','Naina','Pooja','Priya','Neha','Sneha','Sanya','Bhavya','Tanya'];
+      function ri(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+      const msgs=names.map(n=>`🎉 ${n} withdraws $${(Math.random()<.7?ri(2000,3000):ri(3001,4000))}!`);
       let i=0;
       setInterval(()=>{
-        const el = document.querySelector('.live-feed');
-        if(el) el.textContent = msgs[i];
-        i = (i+1) % msgs.length;
-      }, 4000);
+        const el=document.querySelector('.live-feed');
+        if(el) el.textContent=msgs[i];
+        i=(i+1)%msgs.length;
+      },4000);
     })();
   </script>
 </body>
