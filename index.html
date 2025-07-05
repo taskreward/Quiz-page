@@ -151,15 +151,9 @@
       ],
       monthly: []
     };
-    // Global cooldown tracker
     let lastClaimTime = parseInt(localStorage.getItem('lastClaimTime') || '0', 10);
+    function persistClaimTime(ts) { lastClaimTime = ts; localStorage.setItem('lastClaimTime', ts.toString()); }
 
-    function persistClaimTime(ts) {
-      lastClaimTime = ts;
-      localStorage.setItem('lastClaimTime', ts.toString());
-    }
-
-    // Login handler
     function loginUser() {
       const name  = document.getElementById('loginUsername').value.trim();
       const email = document.getElementById('loginEmail').value.trim();
@@ -171,7 +165,6 @@
       showDashboard();
     }
 
-    // Show dashboard after login or on refresh
     function showDashboard() {
       const s = JSON.parse(localStorage.getItem('casinoUser'));
       document.getElementById('loginPage').classList.add('hidden');
@@ -183,19 +176,42 @@
       renderTasks('daily');
     }
 
-    // KPI updater
-    function updateKPI(){
+    function updateKPI() {
       const s = JSON.parse(localStorage.getItem('casinoUser'));
       document.getElementById('balanceDisplay').textContent = `$${s.balance}`;
       document.getElementById('kpiTasks').textContent = s.tasksDone;
       document.getElementById('kpiWeekly').textContent = `$${s.weeklyWin}`;
     }
 
-    // Render tasks for a tab
     function renderTasks(tab) {
-      if(tab==='instructions') return;
       const list = document.getElementById('task-list');
       list.innerHTML = '';
+
+      if (tab === 'instructions') {
+        list.innerHTML = `
+          <div class="task-card" style="flex-direction: column; align-items: flex-start;">
+            <div class="task-title" style="margin-bottom:12px;">🔥 How to Earn More</div>
+            <div class="task-meta">1. All tasks refresh daily.</div>
+            <div class="task-meta">2. Withdraw once balance ≥ threshold.</div>
+            <div class="task-meta">3. Complete every task for max rewards.</div>
+            <div class="task-title" style="margin:16px 0 8px;">⚠️ Important</div>
+            <div class="task-meta">1. Incomplete tasks yield no rewards.</div>
+            <div class="task-meta">2. Stay until “Tasks Completed” screen.</div>
+            <div class="task-title" style="margin:16px 0 8px;">💸 Withdrawal Tips</div>
+            <div class="task-meta">1. Processed within 2 business days.</div>
+            <div class="task-meta">2. Ensure payment details are correct.</div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:20px;">
+            <button onclick="window.open('https://t.me/supraa723','_blank')" style="flex:1;padding:12px;background:var(--accent-blue);border:none;border-radius:8px;color:white;font-weight:600;cursor:pointer;">
+              Support
+            </button>
+            <button onclick="handleReferral()" style="flex:1;padding:12px;background:var(--accent-green);border:none;border-radius:8px;color:white;font-weight:600;cursor:pointer;">
+              Referral
+            </button>
+          </div>`;
+        return;
+      }
+
       const s = JSON.parse(localStorage.getItem('casinoUser'));
       const now = Date.now();
 
@@ -214,7 +230,7 @@
         btn.disabled = isTaskCD || isProc || isGlobalCD;
 
         btn.onclick = () => {
-          if(btn.disabled) return;
+          if (btn.disabled) return;
           persistClaimTime(now);
           window.open(t.url, '_blank');
 
@@ -223,7 +239,7 @@
           localStorage.setItem('casinoUser', JSON.stringify(s));
           renderTasks(tab);
 
-          setTimeout(()=>{
+          setTimeout(() => {
             const u = JSON.parse(localStorage.getItem('casinoUser'));
             u.balance   += t.reward;
             u.tasksDone += 1;
@@ -233,7 +249,7 @@
             localStorage.setItem('casinoUser', JSON.stringify(u));
             updateKPI();
             renderTasks(tab);
-          }, 3*60*1000); // 3 min
+          }, 3*60*1000);
         };
 
         li.innerHTML = `
@@ -248,7 +264,7 @@
     }
 
     // Avatar upload
-    document.getElementById('avatarUpload').addEventListener('change', e=>{
+    document.getElementById('avatarUpload').addEventListener('change', e => {
       const file = e.target.files[0], reader = new FileReader();
       reader.onload = ev => {
         const d = JSON.parse(localStorage.getItem('casinoUser'));
@@ -260,83 +276,77 @@
     });
 
     // Tab switching
-    document.querySelectorAll('.tabs button').forEach(btn=>{
-      btn.onclick = ()=>{
-        document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const tab = btn.dataset.tab;
-        if(tab==='instructions') {
-          document.getElementById('task-list').innerHTML = `
-            <div class="task-card" style="flex-direction: column; align-items: flex-start;">
-              <div class="task-title" style="margin-bottom:12px;">🔥 How to Earn More</div>
-              <div class="task-meta">1. All tasks refresh daily.</div>
-              <div class="task-meta">2. Withdraw once balance ≥ threshold.</div>
-              <div class="task-meta">3. Complete every task for max rewards.</div>
-              <div class="task-title" style="margin:16px 0 8px;">⚠️ Important</div>
-              <div class="task-meta">1. Incomplete tasks yield no rewards.</div>
-              <div class="task-meta">2. Stay until “Tasks Completed” screen.</div>
-              <div class="task-title" style="margin:16px 0 8px;">💸 Withdrawal Tips</div>
-              <div class="task-meta">1. Processed within 2 business days.</div>
-              <div class="task-meta">2. Ensure payment details are correct.</div>
-            </div>`;
-        } else renderTasks(tab);
+        renderTasks(btn.dataset.tab);
       };
     });
 
     // Withdraw modal open/close
     const modal = document.getElementById('withdrawModal');
-    document.querySelector('.withdraw-btn').onclick = () => modal.style.display='block';
-    modal.querySelector('.close').onclick = () => modal.style.display='none';
-    window.onclick = e => { if(e.target===modal) modal.style.display='none'; };
+    document.querySelector('.withdraw-btn').onclick = () => modal.style.display = 'block';
+    modal.querySelector('.close').onclick = () => modal.style.display = 'none';
+    window.onclick = e => { if(e.target === modal) modal.style.display = 'none'; };
 
     // Toggle bank vs PayPal fields
-    document.querySelectorAll('input[name="withdrawType"]').forEach(r=>{
-      r.onchange = ()=>{
-        document.getElementById('bankFields').classList.toggle('hidden', r.value==='paypal');
-        document.getElementById('paypalFields').classList.toggle('hidden', r.value==='bank');
+    document.querySelectorAll('input[name="withdrawType"]').forEach(r => {
+      r.onchange = () => {
+        document.getElementById('bankFields').classList.toggle('hidden', r.value === 'paypal');
+        document.getElementById('paypalFields').classList.toggle('hidden', r.value === 'bank');
       };
     });
 
     // Prefill bank/PayPal data & init on load
-    window.addEventListener('DOMContentLoaded', ()=> {
-      ['accName','accNumber','ifsc'].forEach(id=>{
+    window.addEventListener('DOMContentLoaded', () => {
+      ['accName','accNumber','ifsc'].forEach(id => {
         const v = localStorage.getItem(id);
-        if(v) document.getElementById(id).value=v;
+        if (v) document.getElementById(id).value = v;
       });
       const pp = localStorage.getItem('paypalEmail');
-      if(pp) document.getElementById('paypalEmail').value=pp;
+      if (pp) document.getElementById('paypalEmail').value = pp;
       init();
     });
 
     // Withdraw submission
-    document.getElementById('withdrawSubmit').onclick = ()=>{
+    document.getElementById('withdrawSubmit').onclick = () => {
       const amt = parseFloat(document.getElementById('withdrawAmount').value);
       const err = document.getElementById('withdrawError');
-      if(isNaN(amt)||amt<1000){
+      if (isNaN(amt) || amt < 1000) {
         err.classList.add('visible');
-        setTimeout(()=>err.classList.remove('visible'),3000);
+        setTimeout(() => err.classList.remove('visible'), 3000);
         return;
       }
       const d = JSON.parse(localStorage.getItem('casinoUser'));
-      if(amt>d.balance){ alert('Insufficient balance'); return; }
+      if (amt > d.balance) { alert('Insufficient balance'); return; }
       const method = document.querySelector('input[name="withdrawType"]:checked').value;
-      if(method==='bank'){
+      if (method === 'bank') {
         const n  = document.getElementById('accName').value.trim();
         const nu = document.getElementById('accNumber').value.trim();
         const i  = document.getElementById('ifsc').value.trim();
-        if(!n||!nu||!i){ alert('Fill all bank details'); return; }
-        ['accName','accNumber','ifsc'].forEach(id=>localStorage.setItem(id,document.getElementById(id).value.trim()));
+        if (!n || !nu || !i) { alert('Fill all bank details'); return; }
+        ['accName','accNumber','ifsc'].forEach(id => localStorage.setItem(id, document.getElementById(id).value.trim()));
       } else {
         const e = document.getElementById('paypalEmail').value.trim();
-        if(!e){ alert('Enter your PayPal email'); return; }
-        localStorage.setItem('paypalEmail',e);
+        if (!e) { alert('Enter your PayPal email'); return; }
+        localStorage.setItem('paypalEmail', e);
       }
       d.balance -= amt;
       localStorage.setItem('casinoUser', JSON.stringify(d));
       updateKPI();
       alert(`$${amt} withdrawn via ${method==='bank'?'Bank Transfer':'PayPal'}`);
-      modal.style.display='none';
+      modal.style.display = 'none';
     };
+
+    // Referral handler
+    function handleReferral() {
+      const s = JSON.parse(localStorage.getItem('casinoUser'));
+      const referralLink = `https://yourcasino.com/?ref=${s.user.id}`;
+      navigator.clipboard.writeText(referralLink).then(() => {
+        alert("Referral link copied to clipboard!");
+      });
+    }
 
     // Live feed rotation
     (function(){
@@ -346,8 +356,8 @@
       let i=0;
       setInterval(()=>{
         const el = document.querySelector('.live-feed');
-        if(el) el.textContent=msgs[i];
-        i=(i+1)%msgs.length;
+        if(el) el.textContent = msgs[i];
+        i = (i + 1) % msgs.length;
       },4000);
     })();
   </script>
