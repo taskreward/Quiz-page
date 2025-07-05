@@ -172,7 +172,7 @@
         btn.onclick = () => {
           if (btn.disabled) return;
           lastClaimTime = Date.now();
-          window.open('https://example.com','_blank');
+          window.open(t.url, '_blank');
           saved.processing = saved.processing || {};
           saved.processing[t.key] = Date.now();
           localStorage.setItem('casinoUser', JSON.stringify(saved));
