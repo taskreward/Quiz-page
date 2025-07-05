@@ -349,17 +349,34 @@
     }
 
     // Live feed rotation
-    (function(){
-      const names = ['Arjun','Vihaan','Rohan','Aarav','Kabir','Advait','Ishaan','Krishna','Ritik','Neel','Shaurya','Vivaan','Atharv','Ayaan','Reyansh','Kunal','Darsh','Sahil','Yash','Ansh','Diya','Aanya','Ira','Anika','Meera','Kiara','Saanvi','Riya','Tara','Mira','Sara','Anaya','Aadhya','Kavya','Nisha','Jiya','Shreya','Pallavi','Aditi','Lavya','Tanvi','Radhika','Naina','Pooja','Priya','Neha','Sneha','Sanya','Bhavya','Tanya'];
-      function ri(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-      const msgs = names.map(n=>`🎉 ${n} withdraws $${(Math.random()<.7?ri(1000,2200):ri(3001,3200))}!`);
-      let i=0;
-      setInterval(()=>{
-        const el = document.querySelector('.live-feed');
-        if(el) el.textContent = msgs[i];
-        i = (i + 1) % msgs.length;
-      },4000);
-    })();
-  </script>
-</body>
-</html>
+ (function(){
+  const names = [
+    // 50 Indian names
+    "Ravi","Priya","Arjun","Meera","Rahul","Sneha","Karan","Aisha","Vikram","Neha",
+    "Amit","Pooja","Rohit","Kavya","Varun","Isha","Anil","Divya","Raj","Tanya",
+    "Manish","Ananya","Deepak","Ritika","Nikhil","Shreya","Harsh","Simran","Suresh","Nidhi",
+    "Vivek","Priti","Ashok","Radhika","Yash","Rina","Ajay","Lakshmi","Gaurav","Bhavna",
+    "Sunil","Reema","Ashwini","Sanjeev","Geeta","Mukesh","Sarika","Nitin","Sudha","Tarun",
+
+    // 50 foreign names
+    "John","Sarah","Mike","Emily","David","Olivia","James","Emma","Robert","Ava",
+    "William","Sophia","Daniel","Mia","Matthew","Isabella","Joseph","Charlotte","Andrew","Amelia",
+    "Thomas","Harper","Charles","Ella","Christopher","Abigail","Mark","Lily","Steven","Grace",
+    "Brian","Chloe","Kevin","Madison","Ryan","Zoe","Eric","Natalie","Justin","Hannah",
+    "Jason","Victoria","Anthony","Elizabeth","Patrick","Natalia","Sean","Lauren","Dylan","Samantha"
+  ];
+
+  function randAmount(){
+    return Math.floor(Math.random() * (2600 - 1000 + 1)) + 1000;
+  }
+
+  function updateLive(){
+    const name = names[Math.floor(Math.random()*names.length)];
+    const amt = randAmount();
+    document.querySelector('.live-feed').textContent = `🎉 ${name} just withdrew $${amt}!`;
+  }
+
+  updateLive();              // Immediately set the first message
+  setInterval(updateLive, 5000); // Then refresh every 5 seconds
+})();
+    
