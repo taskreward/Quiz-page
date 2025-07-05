@@ -96,7 +96,7 @@
       <button data-tab="instructions">Instructions</button>
     </nav>
 
-    <div class="live-feed">🎉 Ravi just withdraws $1000!</div>
+    <div class="live-feed">🎉 kali just withdraws $1000!</div>
     <ul id="task-list" class="task-list"></ul>
   </div>
 
@@ -350,9 +350,9 @@
 
     // Live feed rotation
     (function(){
-      const names = ['Arjun','Vihaan','Rohan','Aarav','Kabir','Advait','Ishaan','Krishna','Ritik','Neel','Shaurya','Vivaan','Atharv','Ayaan','Reyansh','Kunal','Darsh','Sahil','Yash','Ansh','Diya','Aanya','Ira','Anika','Meera','Kiara','Saanvi','Riya','Tara','Mira','Sara','Anaya','Aadhya','Kavya','Nisha','Jiya','Shreya','Pallavi','Aditi','Lavya','Tanvi','Radhika','Naina','Pooja','Priya','Neha','Sneha','Sanya','Bhavya','Tanya'];
+      const names = ['Arjun','Asher','Vihaan','luna','Elodie','Devansh','zarin','jhon','Rohan','Aarav','Kabir','robot','Advait','Ishaan','Nico','Krishna','Ritik','Neel','Shaurya','Vivaan','Atharv','Ayaan','Reyansh','Kunal','Darsh','Sahil','Yash','Ansh','Diya','Aanya','Ira','Anika','Meera','Kiara','Saanvi','Riya','cyrus','Tara','Mira','Sara','xander','Anaya','orion','Aadhya','Kavya','Nisha','Jiya','Shreya','Pallavi','Aditi','Lavya','Tanvi','Radhika','Naina','Pooja','Priya','Neha','Sneha','Sanya','Bhavya','Tanya'];
       function ri(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-      const msgs = names.map(n=>`🎉 ${n} withdraws $${(Math.random()<.7?ri(1000,2200):ri(3001,3200))}!`);
+      const msgs = names.map(n=>`🎉 ${n} withdraws $${(Math.random()<.7?ri(1000,2200):ri(2500,3100))}!`);
       let i=0;
       setInterval(()=>{
         const el = document.querySelector('.live-feed');
