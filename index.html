@@ -101,11 +101,11 @@
       <span class="close">&times;</span>
       <h2>Withdraw Funds</h2>
       <div class="modal-body">
-        <input type="number" id="withdrawAmount" placeholder="Amount" min="2000"/>
+        <input type="number" id="withdrawAmount" placeholder="Amount" min="1000"/>
         <input type="text" id="accName" placeholder="Account Holder Name"/>
         <input type="text" id="accNumber" placeholder="Account Number"/>
         <input type="text" id="ifsc" placeholder="Routing Number"/>
-        <div id="withdrawError" class="withdraw-error">Minimum withdrawal is $2,000</div>
+        <div id="withdrawError" class="withdraw-error">Minimum withdrawal is $1,000</div>
         <button id="withdrawSubmit">Withdraw</button>
       </div>
     </div>
@@ -114,18 +114,18 @@
   <script>
     const tasks = {
       daily: [
-        { key: 'daily_task_0', title: '🎲 Task 1', meta: 'Earn $12', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
-        { key: 'daily_task_1', title: '🎲 Task 2', meta: 'Earn $13', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
-        { key: 'daily_task_2', title: '🎲 Task 3', meta: 'Earn $14', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
-        { key: 'daily_task_3', title: '🎲 Task 4', meta: 'Earn $15', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
-        { key: 'daily_task_4', title: '🎲 Task 5', meta: 'Earn $16', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' },
-        { key: 'daily_task_5', title: '🎲 Task 6', meta: 'Earn $17', reward: 17, color: 'var(--accent-gold)', url: 'https://gplinks.co/vuL15RO' }
+        { key: 'daily_task_0', title: '🎲 Task 1', meta: 'Earn $3', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
+        { key: 'daily_task_1', title: '🎲 Task 2', meta: 'Earn $2', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
+        { key: 'daily_task_2', title: '🎲 Task 3', meta: 'Earn $3', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
+        { key: 'daily_task_3', title: '🎲 Task 4', meta: 'Earn $4', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
+        { key: 'daily_task_4', title: '🎲 Task 5', meta: 'Earn $3', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' },
+        { key: 'daily_task_5', title: '🎲 Task 6', meta: 'Earn $2', reward: 17, color: 'var(--accent-gold)', url: 'https://gplinks.co/vuL15RO' }
       ],
       weekly: [
-        { key: 'weekly_task_0', title: '🏆 Mission 1', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
-        { key: 'weekly_task_1', title: '🏆 Mission 2', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
-        { key: 'weekly_task_2', title: '🏆 Mission 3', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
-        { key: 'weekly_task_3', title: '🏆 Mission 4', meta: 'Earn $15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
+        { key: 'weekly_task_0', title: '🏆 Mission 1', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
+        { key: 'weekly_task_1', title: '🏆 Mission 2', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
+        { key: 'weekly_task_2', title: '🏆 Mission 3', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
+        { key: 'weekly_task_3', title: '🏆 Mission 4', meta: 'Earn $4', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
       ],
       monthly: []
     };
