@@ -96,7 +96,7 @@
       <button data-tab="instructions">Instructions</button>
     </nav>
 
-    <div class="live-feed">🎉 Ravi just withdraws $500!</div>
+    <div class="live-feed">🎉 Ravi just withdraws $1000!</div>
     <ul id="task-list" class="task-list"></ul>
   </div>
 
@@ -137,17 +137,17 @@
     const tasks = {
       daily: [
         { key:'daily_task_0', title:'🎲 Task 1', meta:'Earn $3',  reward:3,  color:'var(--accent-gold)', url:'https://gplinks.co/u8YjR' },
-        { key:'daily_task_1', title:'🎲 Task 2', meta:'Earn $4',  reward:4,  color:'var(--accent-gold)', url:'https://gplinks.co/daoZXJS' },
-        { key:'daily_task_2', title:'🎲 Task 3', meta:'Earn $5',  reward:5,  color:'var(--accent-gold)', url:'https://gplinks.co/MyUu8' },
+        { key:'daily_task_1', title:'🎲 Task 2', meta:'Earn $2',  reward:4,  color:'var(--accent-gold)', url:'https://gplinks.co/daoZXJS' },
+        { key:'daily_task_2', title:'🎲 Task 3', meta:'Earn $3',  reward:5,  color:'var(--accent-gold)', url:'https://gplinks.co/MyUu8' },
         { key:'daily_task_3', title:'🎲 Task 4', meta:'Earn $3',  reward:3,  color:'var(--accent-gold)', url:'https://gplinks.co/vwBE8UJ' },
-        { key:'daily_task_4', title:'🎲 Task 5', meta:'Earn $4',  reward:4,  color:'var(--accent-gold)', url:'https://gplinks.co/tpxgBwr' },
-        { key:'daily_task_5', title:'🎲 Task 6', meta:'Earn $5',  reward:5,  color:'var(--accent-gold)', url:'https://gplinks.co/vuL15RO' }
+        { key:'daily_task_4', title:'🎲 Task 5', meta:'Earn $2',  reward:4,  color:'var(--accent-gold)', url:'https://gplinks.co/tpxgBwr' },
+        { key:'daily_task_5', title:'🎲 Task 6', meta:'Earn $2',  reward:5,  color:'var(--accent-gold)', url:'https://gplinks.co/vuL15RO' }
       ],
       weekly: [
-        { key:'weekly_task_0', title:'🏆 Mission 1', meta:'Earn $5', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/aG4wyN' },
-        { key:'weekly_task_1', title:'🏆 Mission 2', meta:'Earn $5', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/xtYbL7' },
-        { key:'weekly_task_2', title:'🏆 Mission 3', meta:'Earn $5', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/I8XK8U' },
-        { key:'weekly_task_3', title:'🏆 Mission 4', meta:'Earn $5', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/HBLM6r' }
+        { key:'weekly_task_0', title:'🏆 Mission 1', meta:'Earn $4', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/aG4wyN' },
+        { key:'weekly_task_1', title:'🏆 Mission 2', meta:'Earn $4', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/xtYbL7' },
+        { key:'weekly_task_2', title:'🏆 Mission 3', meta:'Earn $4', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/I8XK8U' },
+        { key:'weekly_task_3', title:'🏆 Mission 4', meta:'Earn $4', reward:5,  color:'var(--accent-blue)', url:'https://gplinks.co/HBLM6r' }
       ],
       monthly: []
     };
@@ -352,7 +352,7 @@
     (function(){
       const names = ['Arjun','Vihaan','Rohan','Aarav','Kabir','Advait','Ishaan','Krishna','Ritik','Neel','Shaurya','Vivaan','Atharv','Ayaan','Reyansh','Kunal','Darsh','Sahil','Yash','Ansh','Diya','Aanya','Ira','Anika','Meera','Kiara','Saanvi','Riya','Tara','Mira','Sara','Anaya','Aadhya','Kavya','Nisha','Jiya','Shreya','Pallavi','Aditi','Lavya','Tanvi','Radhika','Naina','Pooja','Priya','Neha','Sneha','Sanya','Bhavya','Tanya'];
       function ri(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-      const msgs = names.map(n=>`🎉 ${n} withdraws $${(Math.random()<.7?ri(2000,3000):ri(3001,4000))}!`);
+      const msgs = names.map(n=>`🎉 ${n} withdraws $${(Math.random()<.7?ri(1000,2200):ri(3001,3200))}!`);
       let i=0;
       setInterval(()=>{
         const el = document.querySelector('.live-feed');
