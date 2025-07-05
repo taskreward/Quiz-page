@@ -57,9 +57,9 @@
   <div id="loginPage" class="login-container">
     <div class="login-box">
       <h2 style="text-align:center;margin-bottom:16px;">Login</h2>
-      <input type="text" id="loginUsername" placeholder="Username"/>
-      <input type="email" id="loginEmail" placeholder="Email"/>
-      <input type="password" id="loginPassword" placeholder="Password"/>
+      <input type="text" id="loginUsername" placeholder="Username" />
+      <input type="email" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Password" />
       <button onclick="loginUser()">Login</button>
     </div>
   </div>
@@ -68,8 +68,8 @@
     <header>
       <div class="user-info">
         <label class="avatar-small">
-          <input type="file" id="avatarUpload" accept="image/*" style="display:none"/>
-          <img id="userAvatar" src="" alt="avatar"/>
+          <input type="file" id="avatarUpload" accept="image/*" style="display:none" />
+          <img id="userAvatar" src="" alt="avatar" />
         </label>
         <div class="user-text">
           <div class="name" id="displayUsername"></div>
@@ -113,18 +113,18 @@
   <script>
     const tasks = {
       daily: [
-        { key: 'daily_task_0', title: '🎲 Task 1', meta: 'Earn ₹12', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
-        { key: 'daily_task_1', title: '🎲 Task 2', meta: 'Earn ₹13', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
-        { key: 'daily_task_2', title: '🎲 Task 3', meta: 'Earn ₹14', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
-        { key: 'daily_task_3', title: '🎲 Task 4', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
-        { key: 'daily_task_4', title: '🎲 Task 5', meta: 'Earn ₹16', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' },
-        { key: 'daily_task_5', title: '🎲 Task 6', meta: 'Earn ₹17', reward: 17, color: 'var(--accent-gold)', url: 'https://gplinks.co/vuL15RO' }
+        { key: 'daily_task_0', title: '🎲 Task 1', meta: 'Earn ₹12', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
+        { key: 'daily_task_1', title: '🎲 Task 2', meta: 'Earn ₹13', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
+        { key: 'daily_task_2', title: '🎲 Task 3', meta: 'Earn ₹14', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
+        { key: 'daily_task_3', title: '🎲 Task 4', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
+        { key: 'daily_task_4', title: '🎲 Task 5', meta: 'Earn ₹16', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' },
+        { key: 'daily_task_5', title: '🎲 Task 6', meta: 'Earn ₹17', reward: 17, color: 'var(--accent-gold)', url: 'https://gplinks.co/vuL15RO' }
       ],
       weekly: [
-        { key: 'weekly_task_0', title: '🏆 Mission 1', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
-        { key: 'weekly_task_1', title: '🏆 Mission 2', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
-        { key: 'weekly_task_2', title: '🏆 Mission 3', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
-        { key: 'weekly_task_3', title: '🏆 Mission 4', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
+        { key: 'weekly_task_0', title: '🏆 Mission 1', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
+        { key: 'weekly_task_1', title: '🏆 Mission 2', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
+        { key: 'weekly_task_2', title: '🏆 Mission 3', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
+        { key: 'weekly_task_3', title: '🏆 Mission 4', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
       ],
       monthly: []
     };
@@ -162,25 +162,20 @@
 
     function renderTasks(tab) {
       if (tab === 'instructions') return;
-
       const list = document.getElementById('task-list');
       list.innerHTML = '';
       const saved = JSON.parse(localStorage.getItem('casinoUser'));
       const now = Date.now();
-
       tasks[tab].forEach(t => {
         const li = document.createElement('li');
         li.className = 'task-card';
-
         const lastClaimed = saved.claimed[t.key] || 0;
         const isCooldown = now - lastClaimed < 25*60*60*1000;
         const isProcessing = saved.processing?.[t.key] && (now - saved.processing[t.key]) < 3*60*1000;
-
         const btn = document.createElement('button');
         btn.className = 'btn-claim';
         btn.textContent = isProcessing ? 'Processing...' : 'Claim';
         btn.disabled = isCooldown || isProcessing || (lastClaimTime && (now - lastClaimTime) < 30000);
-
         btn.onclick = () => {
           if (btn.disabled) return;
           lastClaimTime = Date.now();
@@ -188,7 +183,6 @@
           saved.processing = saved.processing || {}; saved.processing[t.key] = Date.now();
           localStorage.setItem('casinoUser', JSON.stringify(saved));
           renderTasks(tab);
-
           setTimeout(() => {
             const updated = JSON.parse(localStorage.getItem('casinoUser'));
             updated.balance += t.reward;
@@ -201,13 +195,7 @@
             renderTasks(tab);
           }, 180000);
         };
-
-        li.innerHTML = `
-          <div class="accent" style="background:${t.color}"></div>
-          <div class="task-info">
-            <div class="task-title">${t.title}</div>
-            <div class="task-meta">${t.meta}</div>
-          </div>`;
+        li.innerHTML = `<div class="accent" style="background:${t.color}"></div><div class="task-info"><div class="task-title">${t.title}</div><div class="task-meta">${t.meta}</div></div>`;
         li.appendChild(btn);
         list.appendChild(li);
       });
@@ -230,13 +218,23 @@
         document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const tab = btn.dataset.tab;
-
         if (tab === 'instructions') {
-          document.getElementById('task-list').innerHTML = \`
+          document.getElementById('task-list').innerHTML = `
             <div class="task-card" style="flex-direction: column; align-items: flex-start;">
               <div class="task-title" style="margin-bottom: 12px;">🔥 How to Earn More</div>
-              <div class="task-meta">1. All tasks will be refreshed tomorrow – come back daily for new opportunities.</div>\
-            \`;
+              <div class="task-meta">1. All tasks will be refreshed tomorrow – come back daily for new opportunities.</div>
+              <div class="task-meta">2. You can withdraw once your balance reaches the minimum withdrawal amount or more.</div>
+              <div class="task-meta">3. Complete every task to earn maximum rewards and unlock new bonus.</div>
+              <div class="task-title" style="margin: 16px 0 8px;">⚠️ Important</div>
+              <div class="task-meta">1. No earnings will be credited if you leave a task incomplete.</div>
+              <div class="task-meta">2. When claiming a task, do not stop midway — only exit after you see \"Tasks Completed\" confirmation.</div>
+              <div class="task-title" style="margin: 16px 0 8px;">💸 Tips for Withdrawal</div>
+              <div class="task-meta">1. Withdrawals are allowed once your balance meets or exceeds the minimum threshold.</div>
+              <div class="task-meta">2. Payouts are processed within 2 business days from the request date.</div>
+              <div class="task-meta">3. Please do not contact support about payments before the expected timeline.</div>
+              <div class="task-meta">4. Ensure all your Account Details (including payment method and payment ID) are accurately filled in to avoid issues.</div>
+            </div>
+          `;
         } else {
           renderTasks(tab);
         }
@@ -284,7 +282,6 @@
       modal.style.display = 'none';
     };
   </script>
-
   <!-- Rotating Live‑Feed (50 names, ₹2k–₹4k) -->
   <script>
     (function() {
