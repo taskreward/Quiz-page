@@ -115,13 +115,26 @@
   </div>
 
   <script>
-    const tasks = {
-      daily: Array.from({length: 6}, (_, i) => ({ title: `🎲 Task ${i+1}`, meta: `Earn ₹${12+i}`, reward: 12+i, color: 'var(--accent-gold)', key: `daily_task_${i}` })),
-      weekly: Array.from({length: 4}, (_, i) => ({ title: `🏆 Mission ${i+1}`, meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', key: `weekly_task_${i}` })),
-      monthly: []
-    };
-    let lastClaimTime = 0;
-
+  const tasks = {
+    daily: [
+      { key: 'task1',  title: '🎲 Task 1',  meta: 'Earn ₹12', reward: 12, color: 'var(--accent-gold)', url: 'https://gplinks.co/u8YjR' },
+      { key: 'task2',  title: '🎲 Task 2',  meta: 'Earn ₹13', reward: 13, color: 'var(--accent-gold)', url: 'https://gplinks.co/daoZXJS' },
+      { key: 'task3',  title: '🎲 Task 3',  meta: 'Earn ₹14', reward: 14, color: 'var(--accent-gold)', url: 'https://gplinks.co/MyUu8' },
+      { key: 'task4',  title: '🎲 Task 4',  meta: 'Earn ₹15', reward: 15, color: 'var(--accent-gold)', url: 'https://gplinks.co/vwBE8UJ' },
+      { key: 'task5',  title: '🎲 Task 5',  meta: 'Earn ₹16', reward: 16, color: 'var(--accent-gold)', url: 'https://gplinks.co/tpxgBwr' }
+    ],
+    weekly: [
+      { key: 'task6',  title: '🏆 Mission 1', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/vuL15RO' },
+      { key: 'task7',  title: '🏆 Mission 2', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/aG4wyN' },
+      { key: 'task8',  title: '🏆 Mission 3', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/xtYbL7' },
+      { key: 'task9',  title: '🏆 Mission 4', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/I8XK8U' },
+      { key: 'task10', title: '🏆 Mission 5', meta: 'Earn ₹15', reward: 15, color: 'var(--accent-blue)', url: 'https://gplinks.co/HBLM6r' }
+    ],
+    monthly: []
+  };
+  let lastClaimTime = 0;
+  …
+    
     function loginUser() {
       const name = document.getElementById('loginUsername').value.trim();
       const email = document.getElementById('loginEmail').value.trim();
