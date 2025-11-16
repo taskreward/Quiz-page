@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Locked Content</title>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,26 +22,56 @@
       border-radius: 10px;
       max-width: 400px;
       width: 90%;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
       text-align: center;
     }
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .instructions {
+      font-size: 16px;
+      text-align: left;
+      margin: 15px 0;
+    }
+    .instructions strong {
+      color: #1E3C72;
+    }
     .btn {
+      display: block;
       width: 100%;
       padding: 12px;
       margin: 10px 0;
-      font-size: 16px;
-      font-weight: bold;
       border: none;
       cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
       border-radius: 5px;
       transition: 0.3s;
     }
     .btn-primary {
       background: #007bff;
-      color: #fff;
+      color: white;
+      position: relative;
+    }
+    .btn-primary.loading::after {
+      content: '';
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      border: 3px solid white;
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .btn-primary:hover {
+      background: #0056b3;
     }
     .btn-secondary {
       background: #28a745;
-      color: #fff;
+      color: white;
       opacity: 0.5;
       pointer-events: none;
     }
@@ -50,21 +79,30 @@
       opacity: 1;
       pointer-events: all;
     }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h2>Unlock Content</h2>
+    <h1>Locked Content</h1>
+    <p>To reach the target page, complete the following steps:</p>
 
-    <p>Click the button below and follow the steps.</p>
+    <div class="instructions">
+      <p><strong>1.</strong> Click the <strong>Watch & Follow to Get Content</strong> button.</p>
+      <p><strong>2.</strong> Follow the channel and <strong>watch for at least 25 seconds.</strong></p>
+      <p><strong>3.</strong> Return to unlock the content.</p>
+    </div>
 
-    <button id="watchButton" class="btn btn-primary">Open Offer</button>
-    <button id="unlockButton" class="btn btn-secondary">Unlock Content</button>
+    <button id="watchButton" class="btn btn-primary">Watch & Follow to Get Content</button>
+    <button id="unlockButton" class="btn btn-secondary">🔓 Unlock Content</button>
   </div>
 
   <script>
-    function openExternal(url) {
+    function openExternalLink(url) {
       const ua = navigator.userAgent.toLowerCase();
       const isInstagram = ua.includes("instagram");
       const isTelegram = ua.includes("telegram");
@@ -82,27 +120,51 @@
     }
 
     window.onload = function () {
-      const params = new URLSearchParams(window.location.search);
+      const urlParams = new URLSearchParams(window.location.search);
+      const uniqueKey = urlParams.get('key');
 
-      const offerLink = params.get("offer");
-      const contentLink = params.get("content");
-
-      if (!offerLink || !contentLink) {
-        alert("Missing URL parameters! Use ?offer= & content=");
+      if (!uniqueKey) {
+        alert("Invalid or missing content key in the URL!");
         return;
       }
 
-      document.getElementById("watchButton").onclick = function () {
-        openExternal(offerLink);
+      // 🔥 FIXED WATCH LINK (YOUR LINK)
+      const videoLink = "https://invite.aagameclub.com/?code=C40P62Z";
 
-        setTimeout(() => {
-          const unlockBtn = document.getElementById("unlockButton");
-          unlockBtn.classList.add("active");
-          unlockBtn.onclick = () => {
-            window.location.href = contentLink;
-          };
-        }, 25000);
-      };
+      // 🔥 OPTIONAL: Show referral code pop-up
+      alert("Enter referral code: C40P62Z");
+
+      // 🔥 FIXED CONTENT LINK (Still taken from ?key= )
+      fetch("content.json")
+        .then(response => response.json())
+        .then(data => {
+          const entry = data[uniqueKey];
+
+          if (!entry) {
+            alert("Video not found in content.json for key: " + uniqueKey);
+            return;
+          }
+
+          const contentLink = entry.contentLink;
+
+          document.getElementById("watchButton").addEventListener("click", function () {
+            this.classList.add("loading");
+
+            openExternalLink(videoLink);
+
+            setTimeout(() => {
+              const unlockBtn = document.getElementById("unlockButton");
+              unlockBtn.classList.add("active");
+              unlockBtn.addEventListener("click", function () {
+                window.location.href = contentLink;
+              });
+            }, 25000);
+          });
+        })
+        .catch(error => {
+          console.error("Error loading content.json:", error);
+          alert("Could not load content.json!");
+        });
     };
   </script>
 
